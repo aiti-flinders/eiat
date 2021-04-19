@@ -1,2 +1,2 @@
-# eiat
-Economic impact assessment tool 
+# AITI-AURIN Economic Impact Assessment Tool
+
