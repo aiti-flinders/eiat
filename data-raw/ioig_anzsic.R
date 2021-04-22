@@ -1,0 +1,28 @@
+## code to prepare `ioig_anzsic` dataset goes here
+library(dplyr)
+library(tidyr)
+library(readabs)
+library(janitor)
+
+library(readxl)
+
+abs_file <- download_abs_data_cube("australian-national-accounts-input-output-tables",
+                                      cube = "520905500140.xls",
+                                      path = here::here("data-raw"))
+
+ioig_anzsic <- read_xls(abs_file,
+                        sheet = "IOIG(2015) to ANZSIC06",
+                        range = "A2:D622",
+                        col_types = c("text", "text", "numeric", "text")) %>%
+  clean_names() %>%
+  filter(!is.na(anzsic_code)) %>%
+  fill(ioig, ioig_descriptor, .direction = "down") %>%
+  mutate(across(c(ioig, anzsic_code), ~str_pad(.x, 4, "left", "0"))) %>%
+  add_row(ioig = "1205", ioig_descriptor = "Wine, spirits and tobacco", anzsic_code = "1213", anzsic_descriptor = "Spirit Manufacturing") %>%
+  add_row(ioig = "1205", ioig_descriptor = "Wine, spirits and tobacco", anzsic_code = "1214", anzsic_descriptor = "Wine and Other Alcoholic Beverage Manufacturing") %>%
+  add_row(ioig = "1205", ioig_descriptor = "Wine, spirits and tobacco", anzsic_code = "1220", anzsic_descriptor = "Cigarette and Tobacco Product Manufacturing")
+
+ioig_anzsic_div <- left_join(ioig_anzsic, abscorr::anzsic %>% mutate(anzsic_class_code = str_pad(anzsic_class_code, 4, "left", "0")), by = c("anzsic_code" = "anzsic_class_code")) %>%
+  distinct(ioig, anzsic_division_code)
+
+usethis::use_data(ioig_anzsic_div, overwrite = TRUE)
