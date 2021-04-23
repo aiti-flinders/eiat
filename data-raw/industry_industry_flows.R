@@ -177,4 +177,6 @@ industry_industry_flows_19 <- bind_rows(industry_industry_flows_19,
 
 
 
+
+
 usethis::use_data(industry_industry_flows_19, overwrite = TRUE)
