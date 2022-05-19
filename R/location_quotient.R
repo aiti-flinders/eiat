@@ -7,8 +7,8 @@
 #'
 #' @examples
 #'
-#' @import dplyr
-#' @import tidyr
+#'
+#' @importFrom rlang .data
 #' @importFrom magrittr %>%
 lq <- function(region) {
 
@@ -19,7 +19,7 @@ lq <- function(region) {
     fte_employment()
 
   regional_lq <- lga_employment %>%
-    mutate(lga_lq = adjust_fte/sum(adjust_fte))
+    dplyr::mutate(lga_lq = adjust_fte/sum(adjust_fte))
 
   #Temporary while not having all the data - otherwise can calculate LQ similar to RCA
   ratio <- industry_industry_flows_19 %>%
@@ -35,7 +35,7 @@ lq <- function(region) {
   national_lq <- ratio %>%
     dplyr::mutate(nat_lq = `Employed full-time`/sum(`Employed full-time`))
 
-  lq <- left_join(regional_lq, national_lq, by = "anzsic_division_code") %>%
+  lq <- dplyr::left_join(regional_lq, national_lq, by = "anzsic_division_code") %>%
     dplyr::select(anzsic_division_code, lga_lq, nat_lq) %>%
     dplyr::mutate(lq = lga_lq/nat_lq,
            lq = ifelse(lq < 1, lq, 1)) %>%

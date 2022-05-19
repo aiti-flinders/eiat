@@ -29,7 +29,7 @@ rtt_basic <- function(region) {
   regional_direct_coefficients["P4", ] <- 1 - colSums(regional_direct_coefficients[1:22, ])
 
   #HH "Productivity" and ""Other"" """Productivity"""  - this section is weird and needs better documentation
-  hh_productivity <- iif_m["Australian Production", "household_consumption"]/ iif_m["P1", "total_supply"]
+  hh_productivity <- iif_m["Australian Production", "household_consumption"] / iif_m["P1", "total_supply"]
   other_productivity <- iif_m["Australian Production", c("government_consumption", "gross_fixed_capital_formation", "inventories")]/iif_m["Australian Production", "total_supply"]
 
   compensation_all <- regional_direct_coefficients[,1:19] %*% diag(sector_productivity(region))
@@ -37,8 +37,8 @@ rtt_basic <- function(region) {
   hh_productivity <- hh_productivity*sum(compensation_all["P1", ])
   other_productivity <- other_productivity*(get_regional_employment(region) %>%
                                               fte_employment() %>%
-                                              summarise(sum(adjust_fte)) %>%
-                                              pull())
+                                              dplyr::summarise(sum(adjust_fte)) %>%
+                                              dplyr::pull())
 
   all_productivity <- c(sector_productivity(region), hh_productivity, other_productivity)
 
@@ -54,6 +54,8 @@ rtt_basic <- function(region) {
   rtt_basic[, c(24,25)] <- rtt_basic[, c(25,24)]
   colnames(rtt_basic) <- colnames(direct_coefficients)
 
+
+
   return(rtt_basic)
 
 
@@ -61,18 +63,4 @@ rtt_basic <- function(region) {
 
 
 
-ff <- function() {
-  dc_19_adelaide_mat <- dc_19_adelaide %>%
-    column_to_rownames("from_anzsic") %>%
-    as.matrix() %>%
-    .[1:24, 1:19]
 
-  #most of the rtt can be calculated with matrix algebra: multiply the dc_ for a region by the regions productivity
-  #as a square matrix with diagonal elements only. Lose column names here but I think that isnt a big problem?
-
-  riot_q1q3 <- data.frame(dc_19_adelaide_mat %*% regional_production) %>%
-    rownames_to_column("from_anzsic") %>%
-    as_tibble()
-
-  colnames(riot_q1q3) <- c("from_anzsic", LETTERS[1:19])
-}
