@@ -1,4 +1,7 @@
 ## code to prepare `114_sector_names` dataset goes here
+library(readxl)
+library(stringr)
+library(dplyr)
 
 io_cols <- read_excel("data-raw/520905500105.xlsx",
                       sheet = "Table 5",
