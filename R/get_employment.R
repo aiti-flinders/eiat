@@ -9,21 +9,30 @@
 #' @export
 #'
 #' @examples
-get_local_employment <- function(region, adjust = TRUE) {
+get_local_employment <- function(region, year, adjust = TRUE) {
 
-  employment <- local_employment %>%
-    dplyr::filter(across(c(place_of_work, usual_residence), ~.x == region)) %>%
+  # Check that the region exists in the available_regions
+
+  if (!region %in% get_available_regions()) {
+    dym <- get_available_regions()[stringdist::amatch(region, get_available_regions(), method = "jw", maxDist = 0.4)]
+
+    warning(paste0(region, " not found in local employment data. Did you mean: '", dym, "' ?"))
+  }
+
+
+  employment <- live_and_work %>%
+    dplyr::filter(dplyr::if_all(c(lga_pow, lga_ur), ~ .x == region),
+                  year == {{year}}) %>%
     dplyr::mutate(lga = region, .before = 1) %>%
-    dplyr::select(-c(place_of_work, usual_residence))
+    dplyr::select(-c(lga_pow, lga_ur))
 
   if (adjust) {
-   employment %>%
+    employment %>%
       adjust_employment() %>%
-      select(lga, anzsic_division_code, adjust_jobs)
+      dplyr::select(lga, industry, employment = adjust_jobs)
   } else {
     employment
   }
-
 }
 
 #' Return the number of people working in a specified local government area, by industry.
@@ -37,14 +46,16 @@ get_local_employment <- function(region, adjust = TRUE) {
 #' @export
 #'
 #' @examples
-get_regional_employment <- function(region, adjust = TRUE) {
-  employment <- regional_employment %>%
-    dplyr::filter(lga == region)
+get_regional_employment <- function(region, year, adjust = TRUE) {
+  employment <- work %>%
+    dplyr::filter(lga_pow == region,
+                  year == {{year}}) %>%
+    dplyr::rename(lga = lga_pow)
 
   if (adjust) {
     employment %>%
+      dplyr::arrange(industry) %>%
       adjust_employment() %>%
-      select(lga, anzsic_division_code, adjust_jobs)
+      dplyr::select(lga, industry, employment = adjust_jobs)
   }
-
 }
