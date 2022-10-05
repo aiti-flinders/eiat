@@ -6,60 +6,128 @@
 #' @export
 #'
 #' @examples
-rtt_basic <- function(region) {
+rtt_basic <- function(region, data = NULL) {
 
-  iif_m <- industry_industry_flows_19 %>%
-    dplyr::filter(!from_anzsic %in% c("Total Intermediate Uses", "Employed total")) %>%
-    dplyr::select(-total_industry_uses) %>%
-    dplyr::relocate(c(household_consumption, government_consumption, gross_fixed_capital_formation, inventories, exports, total_supply), .after = S) %>%
+  m <- create_19_sector(data) %>%
+    dplyr::filter(!from_anzsic %in% c("Total Intermediate Use", "Total Employment")) %>%
+    dplyr::select(-`Total Industry Uses`) %>%
     tibble::column_to_rownames("from_anzsic") %>%
     as.matrix()
 
-  #Calculate Australian DC
-  direct_coefficients <-  iif_m %*% diag(1/iif_m["Australian Production",], names = TRUE)
-  colnames(direct_coefficients) <- colnames(iif_m)
 
-  #Calculate Regions DC
-  regional_direct_coefficients <- diag(lq(region)) %*% direct_coefficients[1:19,]
-  rownames(regional_direct_coefficients) <- rownames(iif_m[1:19,])
+# National Coefficients ---------------------------------------------------
 
-  #Add P1-P4 to Regional DC - they're the same as in the national DC
-  regional_direct_coefficients <- rbind(regional_direct_coefficients, direct_coefficients[20:24,])
-  #Imports (P4) is replaced as the balance of production (which has a DC of 1) and the sum of the transactions
-  regional_direct_coefficients["P4", ] <- 1 - colSums(regional_direct_coefficients[1:22, ])
+  direct_coefficients <-  m %*% diag(1/m["Australian Production",], names = TRUE)
+  colnames(direct_coefficients) <- colnames(m)
+
+
+# Regional Coefficients ---------------------------------------------------
+
+
+  # Step 1: Industry rows and all columns (except total supply)
+
+  regional_direct_coefficients <- diag(lq(region)) %*% direct_coefficients[1:19,-25]
+
+  # Step 2: Add P1-P4 to Regional DC - they're the same as in the national DC
+  regional_direct_coefficients <- rbind(regional_direct_coefficients, direct_coefficients[20:24, -25])
+  # Step 3: Add Total Supply - its the same as the National DC
+  regional_direct_coefficients <- cbind(regional_direct_coefficients, direct_coefficients[1:24, 25])
+  # Step 4: Imports (P4) balance production (which has a DC of 1) and the sum of the transactions
+  regional_direct_coefficients["Imports", -25] <- 1 - colSums(regional_direct_coefficients[1:22, -25])
+  colnames(regional_direct_coefficients) <- colnames(m)
+
+
+
+# Regional Transactions ---------------------------------------------------
+
+  # Industry sectors: National (total employment / fte employment) * Region FTE
+
+  total_compensation <- regional_direct_coefficients[,1:19] %*% diag(sector_productivity(region), names = TRUE)
+  total_compensation <- sum(total_compensation["Compensation of employees", ])
 
   #HH "Productivity" and ""Other"" """Productivity"""  - this section is weird and needs better documentation
-  hh_productivity <- iif_m["Australian Production", "household_consumption"] / iif_m["P1", "total_supply"]
-  other_productivity <- iif_m["Australian Production", c("government_consumption", "gross_fixed_capital_formation", "inventories")]/iif_m["Australian Production", "total_supply"]
+  hh_multiplier <- (m["Australian Production", "Households Final Consumption Expenditure"] / m["Compensation of employees", "Total Supply"]) * total_compensation
+  other_multiplier <- m["Australian Production",
+                          c("General Government Final Consumption Expenditure", "Gross Fixed Capital Formation", "Changes in Inventories")] / m["Australian Production", "Total Supply"]
 
-  compensation_all <- regional_direct_coefficients[,1:19] %*% diag(sector_productivity(region))
-
-  hh_productivity <- hh_productivity*sum(compensation_all["P1", ])
-  other_productivity <- other_productivity*(get_regional_employment(region) %>%
+  other_multiplier <- other_multiplier*(get_regional_employment(region) %>%
                                               fte_employment() %>%
                                               dplyr::summarise(sum(adjust_fte)) %>%
                                               dplyr::pull())
 
-  all_productivity <- c(sector_productivity(region), hh_productivity, other_productivity)
+  rtt_multiplier <- c(sector_productivity(region), hh_multiplier, other_multiplier)
 
-  rtt_basic <- regional_direct_coefficients[,1:23] %*% diag(all_productivity)
+
+
+  rtt_basic <- regional_direct_coefficients[,1:23] %*% diag(rtt_multiplier, names = TRUE)
   rtt_basic <- cbind(rtt_basic, c(sector_productivity(region), rep(NA, 5)))
-  rtt_basic[c("P1", "P2", "P3", "P4"), 24] <- rowSums(rtt_basic[c("P1", "P2", "P3", "P4"), ], na.rm = T)
+  rtt_basic[c("Compensation of employees",
+              "Gross operating surplus & mixed income",
+              "Taxes less subsidies on products and production",
+              "Imports"), 24] <- rowSums(rtt_basic[c("Compensation of employees",
+                                                     "Gross operating surplus & mixed income",
+                                                     "Taxes less subsidies on products and production",
+                                                     "Imports"), ], na.rm = T)
   rtt_basic["Australian Production", 24] <- sum(rtt_basic[,24], na.rm = T)
 
   rtt_exports <- rtt_basic[, 24] - rowSums(rtt_basic[, 1:23])
 
   rtt_basic <- cbind(rtt_basic, rtt_exports)
-  #Swap columns
+
+  #Export column comes before total supply column
   rtt_basic[, c(24,25)] <- rtt_basic[, c(25,24)]
+
+  #Name columns, name rows
   colnames(rtt_basic) <- colnames(direct_coefficients)
+  rownames(rtt_basic) <- rownames(direct_coefficients[1:24,])
 
 
+
+  local_employment <- get_local_employment(region) %>%
+    dplyr::pull(adjust_jobs)
+  total_employment <- get_regional_employment(region) %>%
+    fte_employment() %>%
+    dplyr::pull(adjust_fte)
 
   return(rtt_basic)
 
+#   names(local_employment) <- LETTERS[1:19]
+#   names(total_employment) <- LETTERS[1:19]
+#
+#   # Split HH Consumption into Local/Employed in region
+#
+#   wages_and_salaries_local <- (local_employment / total_employment) * rtt_basic["Compensation of employees", 1:19]
+#   wages_and_salaries_other <- rtt_basic["Compensation of employees", 1:19] - wages_and_salaries_local
+#
+#   rtt_hh <- rbind(rtt_basic[, -20],  c(wages_and_salaries_local, rep(0, 5)),  c(wages_and_salaries_other, rep(0, 5)))
+#
+#   hh_multiplier_local <- (m["Australian Production", "Households Final Consumption Expenditure"] / m["Compensation of employees", "Total Supply"]) * sum(wages_and_salaries_local, na.rm = T)
+#   hh_consumption_employed_region <- c(regional_direct_coefficients[, "Households Final Consumption Expenditure"] * hh_multiplier_local, rep(0, 2))
+#   hh_consumption_local <- c(rtt_basic[, "Households Final Consumption Expenditure"], rep(0, 2)) - hh_consumption_employed_region
+#
+#   # Household Split
+#
+#   rtt_hh <- cbind(rtt_hh, hh_consumption_employed_region, hh_consumption_local)
+#
+#   intermediate_inputs <- colSums(rtt_hh[1:19, 1:26])
+#
+#   rtt_hh <- rbind(rtt_hh, intermediate_inputs)
+#
+#   intermediate_demand <- rowSums(rtt_hh[1:27 ,1:19])
+#
+#   rtt_hh <- cbind(rtt_hh, intermediate_demand)
+#
+#
+#   rtt_hh <- rtt_hh[c(1:19, 27, 26, 25, 20:24), c(1:19, 27, 25, 26, 20:24)]
+#
+#
+# # Check Exports -----------------------------------------------------------
+#   rtt_hh[1:19, "Exports of Goods and Services"] <- rtt_hh[1:19, "Total Supply"] - rowSums(rtt_hh[1:19, c(20:25)])
+#
+#   return(rtt_hh)
 
-}
+
+  }
 
 
 
