@@ -1,6 +1,17 @@
-create_114_sector <- function() {
+#' Create 114 sector input-output table
+#'
+#' @return dataframe
+#' @export create_114_sector
+#'
+create_114_sector <- function(data = NULL) {
 
-  industry_industry <- eiat::industry_flows[complete.cases(eiat::industry_flows),] %>%
+  if (!is.null(data)) {
+    industry_flows <- data[complete.cases(data), ]
+  } else {
+    industry_flows <- eiat::industry_flows[complete.cases(eiat::industry_flows), ]
+  }
+
+  industry_industry <- industry_flows %>%
     dplyr::rename_with(.cols = c(1:114), ~names(io_cols[1:114])) %>%
     dplyr::mutate(`Gross Fixed Capital Formation` = rowSums(dplyr::across(dplyr::contains("Fixed Capital Formation"))),
                   .after = "General Government Final Consumption Expenditure") %>%
@@ -79,9 +90,21 @@ create_114_sector <- function() {
   return(industry_industry_114)
 }
 
-create_19_sector <- function() {
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
+create_19_sector <- function(data = NULL) {
+
+  if (is.null(data)) {
 
   industry_industry_114 <- create_114_sector()
+
+  } else {
+    industry_industry_114 <- create_114_sector(data)
+  }
 
   q1_19 <- industry_industry_114 %>%
     tidyr::pivot_longer(-row_name,
