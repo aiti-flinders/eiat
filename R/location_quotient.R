@@ -1,50 +1,32 @@
-#' Calculate the Location Quotients for a region
-#'
-#' @param region
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#'
-#'
-#' @importFrom rlang .data
-#' @importFrom magrittr %>%
-lq <- function(region) {
 
-  lga_employment <- get_regional_employment(region) %>%
-    fte_employment()
+lq <- function(region, year) {
 
-  lga_employment_local <- get_local_employment(region) %>%
-    fte_employment()
+    data <- work[work$year == year, c("industry", "lga_pow", "employment", "year")] %>%
+      dplyr::rename(lga = lga_pow) %>%
+      adjust_employment() %>%
+      dplyr::select(industry, lga, employment = adjust_jobs) %>%
+      fte_employment()
 
-  regional_lq <- lga_employment %>%
-    dplyr::mutate(lga_lq = adjust_fte/sum(adjust_fte))
+    row_names <- unique(data$lga)
+    col_names <- unique(data$industry)
 
-  #Temporary while not having all the data - otherwise can calculate LQ similar to RCA
-  ratio <- industry_industry_flows_19 %>%
-    dplyr::filter(from_anzsic %in% c("Employed full-time", "Employed total")) %>%
-    tidyr::pivot_longer(cols = A:S,
-                        names_to = "anzsic_division_code",
-                        values_to = "value") %>%
-    dplyr::select(anzsic_division_code, from_anzsic, value) %>%
-    tidyr::pivot_wider(names_from = from_anzsic,
-                       values_from = value) %>%
-    dplyr::mutate(nat_lq = `Employed full-time`/sum(`Employed full-time`))
+    data <- tidyr::pivot_wider(data,
+                               id_cols = lga,
+                               names_from = industry,
+                               values_from = employment)
 
-  national_lq <- ratio %>%
-    dplyr::mutate(nat_lq = `Employed full-time`/sum(`Employed full-time`))
+    data_array <- as.matrix(data[2:length(data)])
 
-  lq <- dplyr::left_join(regional_lq, national_lq, by = "anzsic_division_code") %>%
-    dplyr::select(anzsic_division_code, lga_lq, nat_lq) %>%
-    dplyr::mutate(lq = lga_lq/nat_lq,
-           lq = ifelse(lq < 1, lq, 1)) %>%
-    dplyr::pull(lq)
+    lq <- t(t(data_array/rowSums(data_array, na.rm = TRUE)) / (colSums(data_array, na.rm = TRUE)/sum(data_array, na.rm = TRUE)))
 
-  return(lq)
-}
+    lq %>%
+      tibble::as_tibble() %>%
+      dplyr::mutate(lga = row_names,
+                    year = {{year}}) %>%
+      tidyr::pivot_longer(cols = -c(lga, year),
+                          names_to = "industry",
+                          values_to = "lq") %>%
+      dplyr::filter(lga == region)
 
 
-
-
-
+    }
