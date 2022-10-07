@@ -1,6 +1,12 @@
 ## code to prepare `create_lq_models` dataset goes here
 devtools::load_all()
 
-regions <- get_available_regions()
+nat_data <- get_data(year = 2016)
 
-usethis::use_data(create_lq_models, overwrite = TRUE)
+lq_models <- get_available_regions(year = 2016) %>%
+  set_names() %>%
+  map(~possibly(rtt_basic, otherwise = "error here")(nat_data, .x))
+
+
+
+usethis::use_data(lq_models, overwrite = TRUE)

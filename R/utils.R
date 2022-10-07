@@ -52,8 +52,9 @@ fte_employment <- function(regional_employment, national_ratios) {
     dplyr::select(-c(anzsic_division_code, `FTE Employment`, `Total Employment`, fte))
 }
 
-get_available_regions <- function() {
+get_available_regions <- function(year) {
   work %>%
+    dplyr::filter(year == {{year}}) %>%
     dplyr::distinct(lga_pow) %>%
     dplyr::rename(lga = lga_pow) %>%
     dplyr::pull(lga)
