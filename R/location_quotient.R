@@ -1,32 +1,23 @@
 
-lq <- function(region, year) {
+lq <- function(region, year, path = NULL) {
 
-    data <- work[work$year == year, c("industry", "lga_pow", "employment", "year")] %>%
+    region_data <- work[work$year == year, c("industry", "lga_pow", "employment", "year")] %>%
       dplyr::rename(lga = lga_pow) %>%
       adjust_employment() %>%
       dplyr::select(industry, lga, employment = adjust_jobs) %>%
-      fte_employment()
+      fte_employment(path) %>%
+      dplyr::filter(lga == region) %>%
+      dplyr::mutate(region_ratio = employment / sum(employment))
 
-    row_names <- unique(data$lga)
-    col_names <- unique(data$industry)
+    national_data <- fte_industry_ratio(path)
 
-    data <- tidyr::pivot_wider(data,
-                               id_cols = lga,
-                               names_from = industry,
-                               values_from = employment)
+    lq <- region_data %>%
+      dplyr::left_join(national_data, by = "industry") %>%
+      dplyr::mutate(lq = region_ratio / national_ratio,
+                    lq = ifelse(lq < 1, lq, 1)) %>%
+      dplyr::pull(lq)
 
-    data_array <- as.matrix(data[2:length(data)])
-
-    lq <- t(t(data_array/rowSums(data_array, na.rm = TRUE)) / (colSums(data_array, na.rm = TRUE)/sum(data_array, na.rm = TRUE)))
-
-    lq %>%
-      tibble::as_tibble() %>%
-      dplyr::mutate(lga = row_names,
-                    year = {{year}}) %>%
-      tidyr::pivot_longer(cols = -c(lga, year),
-                          names_to = "industry",
-                          values_to = "lq") %>%
-      dplyr::filter(lga == region)
+   return(lq)
 
 
     }

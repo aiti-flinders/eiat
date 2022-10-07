@@ -1,5 +1,5 @@
-add_non_anzsic_rows <- function(data) {
-  data %>%
+add_non_anzsic_rows <- function(.data) {
+  .data %>%
     add_row(anzsic_division_code = "Total Intermediate Uses", lq = 1) %>%
     add_row(anzsic_division_code = "P1", lq = 1) %>%
     add_row(anzsic_division_code = "P2", lq = 1) %>%
@@ -25,31 +25,38 @@ adjust_employment <- function(.data) {
     dplyr::ungroup()
 
 
+
 }
 
-fte_employment <- function(data) {
-  ratio <- create_19_sector() %>%
-    dplyr::filter(from_anzsic %in% c("FTE Employment", "Total Employment")) %>%
+fte_industry_ratio <- function(path = NULL) {
+  ratio <- create_19_sector(path) %>%
+    dplyr::filter(from_anzsic %in% c("FTE Employment")) %>%
     tidyr::pivot_longer(cols = A:S,
-                        names_to = "anzsic_division_code",
-                        values_to = "value") %>%
-    dplyr::select(anzsic_division_code, from_anzsic, value) %>%
-    tidyr::pivot_wider(names_from = from_anzsic,
-                       values_from = value) %>%
-    dplyr::mutate(fte = `FTE Employment`/`Total Employment`) %>%
-    dplyr::left_join(anzsic_swap, by = c("anzsic_division_code" = "letter"))
+                        names_to = "industry",
+                        values_to = "employment") %>%
+    dplyr::select(industry, employment) %>%
+    dplyr::left_join(anzsic_swap, by = c("industry" = "letter")) %>%
+    dplyr::select(industry = name, employment) %>%
+    dplyr::mutate(national_ratio = employment / sum(employment)) %>%
+    dplyr::select(-employment)
 
-  data %>%
+  return(ratio)
+}
+
+fte_employment <- function(regional_employment, national_ratios) {
+  ratio <- national_ratios
+
+  regional_employment %>%
     dplyr::left_join(ratio, by = c("industry" = "name")) %>%
     dplyr::mutate(employment = employment * fte) %>%
     dplyr::select(-c(anzsic_division_code, `FTE Employment`, `Total Employment`, fte))
 }
 
 get_available_regions <- function() {
-  local_employment %>%
-    dplyr::distinct(usual_residence) %>%
-    dplyr::rename(region_lga = usual_residence) %>%
-    dplyr::pull(region_lga)
+  work %>%
+    dplyr::distinct(lga_pow) %>%
+    dplyr::rename(lga = lga_pow) %>%
+    dplyr::pull(lga)
 }
 
 anzsic_letter_to_number <- function() {
