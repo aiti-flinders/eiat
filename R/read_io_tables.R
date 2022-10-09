@@ -1,6 +1,6 @@
-read_industry_flow_table <- function(fy = "current", path = NULL) {
+read_industry_flow_table <- function(path = NULL) {
 
-  if (fy != "current" & !is.null(path)) {
+  if (!is.null(path)) {
 
     raw <- suppressMessages(readxl::read_excel(path, sheet = "Table 5", .name_repair = "minimal"))
 
@@ -19,7 +19,7 @@ read_industry_flow_table <- function(fy = "current", path = NULL) {
 
   ix <- match(TRUE, grepl("FROM INDUSTRY", raw[[1]]))
 
-  industry_flow <- raw[(ix+1):nrow(raw), 3:ncol(raw)]
+  industry_flow <- raw[(ix + 1):nrow(raw), 3:ncol(raw)]
 
   industry_flow[1:length(industry_flow)] <- sapply(industry_flow[1:length(industry_flow)], as.numeric)
 
@@ -29,13 +29,20 @@ read_industry_flow_table <- function(fy = "current", path = NULL) {
 
 }
 
-read_national_employment_table <- function(fy = "current") {
+read_national_employment_table <- function(path = NULL) {
+
+  if (!is.null(path)) {
+    raw <- suppressMessages(readxl::read_excel(path, sheet = "Table 20", .name_repair = "minimal"))
+
+  } else if (is.null(path)) {
 
   employment_table <- readabs::download_abs_data_cube(catalogue_string = "australian-national-accounts-input-output-tables",
                                                       cube = "520905500120.xlsx",
                                                       path = here::here("data-raw"))
-
   raw <- suppressMessages(readxl::read_excel(employment_table, sheet = "Table 20"))
+
+  }
+
 
   df <- raw[(!is.na(raw[[2]]) & !is.na(raw[[1]])), ]
 
