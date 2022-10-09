@@ -3,13 +3,54 @@
 #' @return dataframe
 #' @export create_114_sector
 #'
-create_114_sector <- function(data = NULL) {
+create_114_sector <- function(path = NULL) {
 
-  if (!is.null(data)) {
-    industry_flows <- data[complete.cases(data), ]
-  } else {
-    industry_flows <- eiat::industry_flows[complete.cases(eiat::industry_flows), ]
+  # Need a folder with table 5 (industry flows) and table 20 (employment by industry)
+  if (is.null(path)) {
+
+    industry_flows <- industry_flows[complete.cases(industry_flows), ]
+    path_to_table_5 <- NULL
+    path_to_table_20 <- NULL
+
+  } else if (dir.exists(path)) {
+
+    # Check for table 5. Assume that the file is always called "520905500105", either .xls or .xlsx
+
+    path_to_table_5 <- c(paste0(path, "/", "520905500105.xls"), paste0(path, "/", "520905500105.xlsx"))
+    path_to_table_5 <- path_to_table_5[which(file.exists(path_to_table_5))]
+
+    path_to_table_20 <- c(paste0(path, "/", "520905500120.xls"), paste0(path, "/", "520905500120.xlsx"))
+    path_to_table_20 <- path_to_table_20[which(file.exists(path_to_table_20))]
+
+    if (any(file.exists(path_to_table_5))) {
+
+      industry_flows <- read_industry_flow_table(path = path_to_table_5)
+      industry_flows <- industry_flows[complete.cases(industry_flows), ]
+
+
+      message(glue::glue("Reading {path_to_table_5[which(file.exists(path_to_table_5))]}"))
+    } else {
+
+      stop("Could not find `520905500105.xls/x` in `path`")
+
+    }
+
+    if (any(file.exists(path_to_table_20))) {
+
+      national_employment <- read_national_employment_table(path = path_to_table_20)
+
+      message(glue::glue("Reading {path_to_table_20[which(file.exists(path_to_table_20))]}"))
+    } else {
+
+      stop("Could not find `520905500120.xls/x` in `path`")
+
+    }
+
+  } else if (!is.null(path) & !dir.exists(path)) {
+
+    stop("`path` must specify an existing folder containing the ABS National Accounts tables 5 and 20")
   }
+
 
   industry_industry <- industry_flows %>%
     dplyr::rename_with(.cols = c(1:114), ~names(io_cols[1:114])) %>%
@@ -87,7 +128,11 @@ create_114_sector <- function(data = NULL) {
                                           rowSums(dplyr::across("Total Industry Uses":"Exports of Goods and Services")),
                                           `Total Supply`))
 
-  return(industry_industry_114)
+  out <- list("flows" = industry_industry_114,
+              "io_path" = path_to_table_5,
+              "industry_employment_path" = path_to_table_20)
+
+
 }
 
 #' Title
@@ -96,15 +141,12 @@ create_114_sector <- function(data = NULL) {
 #' @export
 #'
 #' @examples
-create_19_sector <- function(data = NULL) {
+create_19_sector <- function(path = NULL) {
 
-  if (is.null(data)) {
+  create_114 <-  create_114_sector(path)
 
-  industry_industry_114 <- create_114_sector()
-
-  } else {
-    industry_industry_114 <- create_114_sector(data)
-  }
+  industry_industry_114 <- create_114$flows
+  path_to_table_20 <- create_114$industry_employment_path
 
   q1_19 <- industry_industry_114 %>%
     tidyr::pivot_longer(-row_name,
@@ -173,7 +215,7 @@ create_19_sector <- function(data = NULL) {
 
   industry_industry_flows_19 <- dplyr::bind_rows(q13, q24) %>%
     dplyr::mutate(`Total Supply` = rowSums(dplyr::across(c(21:26)))) %>%
-    dplyr::bind_rows(eiat::national_employment) %>%
+    dplyr::bind_rows(read_national_employment_table(path = path_to_table_20)) %>%
     tidyr::replace_na(list(`Households Final Consumption Expenditure` = 0,
                            `General Government Final Consumption Expenditure` = 0,
                            `Gross Fixed Capital Formation` = 0,
