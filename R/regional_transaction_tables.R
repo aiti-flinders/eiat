@@ -134,9 +134,27 @@ rtt_basic <- function(data, region) {
 
   rtt_hh <- rtt_hh[c(1:19, 27, 25, 26, 21:24), c(1:19, 27, 25, 26, 20:24)]
 
+  rownames(rtt_hh) <- c(LETTERS[1:19],
+                        "Intermediate Inputs",
+                        "Wages and Salaries - Local", "Wages and Salaries - Other",
+                        "Gross operating surplus and mixed income",
+                        "Taxes less subsidies on products and production",
+                        "Imports",
+                        "Australian Production")
+
+  rtt_hh[c("Wages and Salaries - Local", "Wages and Salaries - Other"), "Total Supply"] <- rowSums(rtt_hh[c("Wages and Salaries - Local", "Wages and Salaries - Other"), 20:26])
+
+  #this is looking pretty good. Final check is for negative exports
+
+
+  # If exports are negative, apportion total supply across industries
+  #1. Which industries have negative exports:
+  ix <- which(rtt_hh[1:19, "Exports of Goods and Services"] < 0)
+  z <-  rowSums(rtt_hh[ix, c(ix, 21:25)])
+  rtt_hh[ix, c(ix, 21:25)] <- rtt_hh[ix, c(ix, 21:25)] + (rtt_hh[ix, c(ix, 21:25)]/z)*rtt_hh[ix, "Exports of Goods and Services"]
 
   # Check Exports -----------------------------------------------------------
-  #rtt_hh[1:19, "Exports of Goods and Services"] <- rtt_hh[1:19, "Total Supply"] - rowSums(rtt_hh[1:19, c(20:25)])
+  rtt_hh[ix, "Exports of Goods and Services"] <- rtt_hh[ix, "Total Supply"] - rowSums(rtt_hh[ix, c(20:25)])
 
   return(rtt_hh)
 
