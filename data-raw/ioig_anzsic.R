@@ -1,18 +1,18 @@
 ## code to prepare `ioig_anzsic` dataset goes here
 library(dplyr)
 library(tidyr)
-library(readabs)
+library(stringr)
 library(janitor)
 library(strayr)
 library(readxl)
 
-abs_file <- download_abs_data_cube("australian-national-accounts-input-output-tables",
-                                      cube = "520905500140.xls",
-                                      path = here::here("data-raw"))
+download.file(url = "https://www.abs.gov.au/methodologies/australian-national-accounts-input-output-tables-methodology/2019-20/Industry%20and%20Product%20Concordance%20Tables%202019-20.xlsx",
+                          destfile = "data-raw/ioig_anzsic.xlsx",
+                          mode = "wb")
 
-ioig_anzsic <- read_xls("data-raw/520905500140.xls",
+ioig_anzsic <- read_xlsx("data-raw/ioig_anzsic.xlsx",
                         sheet = "IOIG(2015) to ANZSIC06",
-                        range = "A2:D622",
+                        range = "A5:D625",
                         col_types = c("text", "text", "numeric", "text")) %>%
   clean_names() %>%
   filter(!is.na(anzsic_code)) %>%
