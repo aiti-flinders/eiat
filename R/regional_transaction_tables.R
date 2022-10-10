@@ -136,7 +136,8 @@ rtt_basic <- function(data, region) {
 
   rownames(rtt_hh) <- c(LETTERS[1:19],
                         "Intermediate Inputs",
-                        "Wages and Salaries - Local", "Wages and Salaries - Other",
+                        "Wages and Salaries - Local",
+                        "Wages and Salaries - Other",
                         "Gross operating surplus and mixed income",
                         "Taxes less subsidies on products and production",
                         "Imports",
@@ -155,6 +156,14 @@ rtt_basic <- function(data, region) {
 
   # Check Exports -----------------------------------------------------------
   rtt_hh[ix, "Exports of Goods and Services"] <- rtt_hh[ix, "Total Supply"] - rowSums(rtt_hh[ix, c(20:25)])
+
+  total_employment <- c(total_employment, rep(0, 8))
+  local_employment <- c(local_employment, rep(0, 8))
+
+  other_employment <- total_employment - local_employment
+
+  rtt_hh <- rbind(rtt_hh, local_employment, other_employment, total_employment)
+  rownames(rtt_hh)[rownames(rtt_hh) %in% c("local_employment", "other_employment", "total_employment")] <- c("Local Employment", "Other Employment", "Total Employment")
 
   return(rtt_hh)
 
