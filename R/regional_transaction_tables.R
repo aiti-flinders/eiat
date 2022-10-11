@@ -39,12 +39,24 @@ rtt_basic <- function(data, region) {
 
   # Step 1: Industry rows and all columns (except total supply)
 
-  regional_direct_coefficients <- diag(location_quotient) %*% direct_coefficients[1:19,-25]
+  regional_direct_coefficients <- diag(location_quotient) %*% direct_coefficients[1:19, !colnames(direct_coefficients) %in% c("Total Supply")]
 
-  # Step 2: Add P1-P4 to Regional DC - they're the same as in the national DC
-  regional_direct_coefficients <- rbind(regional_direct_coefficients, direct_coefficients[20:24, -25])
+  # Step 2: Add P1-P4 to Regional DC
+  # Compensation of employees, Gross operating surplus & mixed income, Taxes less subsidies on products and production,
+  # and Australian production are the same as in the national direct coefficients. We add imports now to adjust later.
+  ix <- c("Compensation of employees",
+          "Gross operating surplus & mixed income",
+          "Taxes less subsidies on products and production",
+          "Imports",
+          "Australian Production")
+
+  regional_direct_coefficients <- rbind(regional_direct_coefficients,
+                                        direct_coefficients[ix, !colnames(direct_coefficients) %in% c("Total Supply")])
+
   # Step 3: Add Total Supply - its the same as the National DC
+
   regional_direct_coefficients <- cbind(regional_direct_coefficients, direct_coefficients[1:24, 25])
+
   # Step 4: Imports (P4) balance production (which has a DC of 1) and the sum of the transactions
   regional_direct_coefficients["Imports", -25] <- 1 - colSums(regional_direct_coefficients[1:22, -25])
   colnames(regional_direct_coefficients) <- colnames(m)
@@ -93,8 +105,6 @@ rtt_basic <- function(data, region) {
   #Name columns, name rows
   colnames(rtt_basic) <- colnames(direct_coefficients)
   rownames(rtt_basic) <- rownames(direct_coefficients[1:24,])
-
-
 
   local_employment <- get_local_employment(region, data$Year) %>%
     fte_employment(national_ratios = data$`FTE Ratios`) %>%
@@ -151,11 +161,14 @@ rtt_basic <- function(data, region) {
   # If exports are negative, apportion total supply across industries
   #1. Which industries have negative exports:
   ix <- which(rtt_hh[1:19, "Exports of Goods and Services"] < 0)
-  z <-  rowSums(rtt_hh[ix, c(ix, 21:25)])
+
+  z <-  rowSums(rtt_hh[ix, c(ix, 21:25), drop = FALSE])
+
+
   rtt_hh[ix, c(ix, 21:25)] <- rtt_hh[ix, c(ix, 21:25)] + (rtt_hh[ix, c(ix, 21:25)]/z)*rtt_hh[ix, "Exports of Goods and Services"]
 
   # Check Exports -----------------------------------------------------------
-  rtt_hh[ix, "Exports of Goods and Services"] <- rtt_hh[ix, "Total Supply"] - rowSums(rtt_hh[ix, c(20:25)])
+  rtt_hh[ix, "Exports of Goods and Services"] <- rtt_hh[ix, "Total Supply"] - rowSums(rtt_hh[ix, c(20:25), drop = FALSE])
 
   total_employment <- c(total_employment, rep(0, 8))
   local_employment <- c(local_employment, rep(0, 8))
