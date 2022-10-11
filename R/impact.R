@@ -26,16 +26,17 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
 
   inv_I_A_bar <- solve(diag(1, 20, 20) - A_closed)
   inv_I_A_bar <- rbind(inv_I_A_bar, c(colSums(inv_I_A_bar[, 1:19]), 0))
-  consumption_induced <- inv_I_A_bar[21,] - c(inv_I_A[20,], 0)
 
   sector_impacts <- impacts
 
 
   #Output
-  output_m <- inv_I_A_bar[1:19, 1:19] * sector_impacts
-  total_output <- rowSums(output_m)
-  consumption_induced_output <- rowSums((inv_I_A_bar[1:19, 1:19] - inv_I_A[1:19, 1:19])*sector_impacts)
+  output_m <- inv_I_A_bar[1:19, 1:19] %*% sector_impacts
+  total_output <- output_m
+  consumption_induced_output <- (inv_I_A_bar[1:19, 1:19] - inv_I_A[1:19, 1:19]) %*% sector_impacts
   production_induced_output <- total_output - sector_impacts - consumption_induced_output
+
+
 
   output_df <- data.frame(
     "Sector" = LETTERS[1:19],
@@ -44,7 +45,6 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
     "Consumption Induced Output" = consumption_induced_output,
     "Total Output" = total_output
   )
-
 
 
 
@@ -63,8 +63,8 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
 
   #GRP
   initial_grp <- grp * sector_impacts
-  consumption_induced_grp <- sector_impacts * rowSums(inv_I_A_bar[1:19, 1:19]*grp - inv_I_A[1:19, 1:19]*grp)
-  total_grp <- rowSums(inv_I_A_bar[1:19, 1:19]*sector_impacts*grp)
+  consumption_induced_grp <- (inv_I_A_bar[1:19, 1:19]*grp - inv_I_A[1:19, 1:19]*grp) %*% sector_impacts
+  total_grp <- (inv_I_A_bar[1:19, 1:19]*grp) %*% sector_impacts
   production_induced_grp <- total_grp - initial_grp - consumption_induced_grp
 
   grp_df <- data.frame(
@@ -75,13 +75,11 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
     "Total GRP" = total_grp
   )
 
-
-
   #Employment
   emp <- fte_hh_v["Total Employment", 1:19]
   initial_employment <- emp * sector_impacts
-  consumption_induced_employment <- sector_impacts * rowSums(inv_I_A_bar[1:19, 1:19] * emp - inv_I_A[1:19, 1:19] * emp)
-  total_employment <- rowSums(inv_I_A_bar[1:19, 1:19]*sector_impacts*emp)
+  consumption_induced_employment <- (inv_I_A_bar[1:19, 1:19] * emp - inv_I_A[1:19, 1:19] * emp) %*% sector_impacts
+  total_employment <- (inv_I_A_bar[1:19, 1:19]*emp) %*% sector_impacts
   production_induced_employment <- total_employment - initial_employment - consumption_induced_employment
 
   emp_df <- data.frame(
@@ -92,14 +90,29 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
     "Total Employment" = total_employment
   )
 
-  dplyr::left_join(
-    output_df,
-    grp_df,
-    by = "Sector"
-  ) %>%
-    dplyr::left_join(
-      emp_df,
-      by = "Sector"
-    )
+
+
+  out <- list("output" = output_df,
+              "grp" = grp_df,
+              "emp" = emp_df)
+
+  return(out)
+
+}
+
+reshape_output <- function(data, impacts) {
+
+  if (dim(impacts)[2] > 1) {
+    data  %>%
+      tidyr::pivot_longer(cols = -Sector,
+                          names_to = c("type", "year"),
+                          names_pattern = "^(.*[\\.])([1-9])") %>%
+      mutate(year = as.numeric(year) + ({{year}}-1))
+  } else {
+    data %>%
+      tidyr::pivot_longer(cols = -Sector,
+                          names_to = "type",
+                          values_to = {{year}})
+  }
 
 }
