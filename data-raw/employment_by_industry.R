@@ -31,7 +31,8 @@ df <- purrr::map_df(.x = c(2011, 2016),
                     .f = ~regional_employment(year = .x))
 
 df <- df %>%
-  mutate(across(c(lga_ur, lga_pow), ~gsub("\\^", "\\'", .x)))
+  mutate(across(c(lga_ur, lga_pow), ~gsub("\\^", "\\'", .x))) %>%
+  filter(if_all(c(lga_ur, lga_pow), ~ !grepl("No Fixed Address|POW not applicable", .x)))
 
 live_and_work <- df %>%
   filter(lga_ur == lga_pow)
