@@ -1,3 +1,14 @@
+#' Title
+#'
+#' @param region
+#' @param year
+#' @param path
+#' @param impacts
+#'
+#' @return
+#' @export
+#'
+#' @examples
 impact_analysis <- function(region, year, path = NULL, impacts) {
 
   rtt <- lq_models[[region]]
