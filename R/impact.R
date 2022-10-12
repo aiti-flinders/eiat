@@ -9,7 +9,8 @@
 #' @export
 #'
 #' @examples
-impact_analysis <- function(region, year, path = NULL, impacts) {
+#' @importFrom magrittr %>%
+impact_analysis <- function(region, years, impacts) {
 
   rtt <- lq_models[[region]]
 
@@ -39,10 +40,12 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
 
 
   output_df <- data.frame(
+    row.names = NULL,
     "Sector" = LETTERS[1:19],
     "Direct Output" = sector_impacts,
     "Production Induced Output" = production_induced_output,
     "Consumption Induced Output" = consumption_induced_output,
+    "Flow-on Output" = production_induced_output + consumption_induced_output,
     "Total Output" = total_output
   )
 
@@ -68,10 +71,12 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
   production_induced_grp <- total_grp - initial_grp - consumption_induced_grp
 
   grp_df <- data.frame(
+    row.names = NULL,
     "Sector" = LETTERS[1:19],
     "Direct GRP" = initial_grp,
     "Production Induced GRP" = production_induced_grp,
     "Consumption Induced GRP" = consumption_induced_grp,
+    "Flow-on GRP" = production_induced_grp + consumption_induced_grp,
     "Total GRP" = total_grp
   )
 
@@ -83,10 +88,12 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
   production_induced_employment <- total_employment - initial_employment - consumption_induced_employment
 
   emp_df <- data.frame(
+    row.names = NULL,
     "Sector" = LETTERS[1:19],
     "Direct Employment" = initial_employment,
     "Production Induced Employment" = production_induced_employment,
     "Consumption Induced Employment" = consumption_induced_employment,
+    "Flow-on Employment" = production_induced_employment + consumption_induced_employment,
     "Total Employment" = total_employment
   )
 
@@ -96,23 +103,24 @@ impact_analysis <- function(region, year, path = NULL, impacts) {
               "grp" = grp_df,
               "emp" = emp_df)
 
+  out <- lapply(out, reshape_output, impacts = impacts, years = years)
+
   return(out)
 
 }
 
-reshape_output <- function(data, impacts) {
+reshape_output <- function(data, impacts, years) {
 
   if (dim(impacts)[2] > 1) {
     data  %>%
       tidyr::pivot_longer(cols = -Sector,
                           names_to = c("type", "year"),
-                          names_pattern = "^(.*[\\.])([1-9])") %>%
-      mutate(year = as.numeric(year) + ({{year}}-1))
+                          names_pattern = "^(.*[\\.])(\\d{4})")
   } else {
     data %>%
       tidyr::pivot_longer(cols = -Sector,
                           names_to = "type",
-                          values_to = {{year}})
+                          values_to = as.character(years))
   }
 
 }
