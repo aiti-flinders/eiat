@@ -54,14 +54,9 @@ fte_employment <- function(regional_employment, national_ratios) {
 
 get_available_regions <- function(year) {
 
-  if ({{year}} == 2011) {
-    states <- lga_2011
-
-  } else if ({{year}} == 2016) {
-    states <- lga_2016
-
-
-  }
+  if ({{year}} == 2011) {states <- lga_2011}
+  else if ({{year}} == 2016) {states <- lga_2016}
+  else if ({{year}} == 2021) {states <- lga_2021}
 
   work %>%
     dplyr::filter(year == {{year}}) %>%
