@@ -27,7 +27,7 @@ regional_employment <- function(year) {
            if_all(c(industry, lga_ur, lga_pow), ~. != "Total"))
 }
 
-df <- purrr::map_df(.x = c(2011, 2016),
+df <- purrr::map_df(.x = c(2011, 2016, 2021),
                     .f = ~regional_employment(year = .x))
 
 df <- df %>%
