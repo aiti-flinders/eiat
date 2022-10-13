@@ -53,11 +53,21 @@ fte_employment <- function(regional_employment, national_ratios) {
 }
 
 get_available_regions <- function(year) {
+
+  if ({{year}} == 2011) {
+    states <- lga_2011
+
+  } else if ({{year}} == 2016) {
+    states <- lga_2016
+
+
+  }
+
   work %>%
     dplyr::filter(year == {{year}}) %>%
     dplyr::distinct(lga_pow) %>%
     dplyr::rename(lga = lga_pow) %>%
-    dplyr::pull(lga)
+    dplyr::left_join(states, by = c("lga"))
 }
 
 anzsic_letter_to_number <- function() {
