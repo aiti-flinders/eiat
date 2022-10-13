@@ -11,14 +11,6 @@
 #' @examples
 get_local_employment <- function(region, year, adjust = TRUE) {
 
-  # Check that the region exists in the available_regions
-
-  if (!region %in% get_available_regions(year = {{year}})) {
-    dym <- get_available_regions()[stringdist::amatch(region, get_available_regions(year = {{year}}), method = "jw", maxDist = 0.4)]
-
-    warning(paste0(region, " not found in local employment data. Did you mean: '", dym, "' ?"))
-  }
-
 
   employment <- live_and_work %>%
     dplyr::filter(dplyr::if_all(c(lga_pow, lga_ur), ~ .x == region),
