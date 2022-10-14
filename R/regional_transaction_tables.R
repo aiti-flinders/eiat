@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-rtt_basic <- function(data, region) {
+rtt_basic <- function(data, region, type = c("basic", "household")) {
 
   if (!is.list(data)) {
     stop("Need a list with: 19 sector IO, sector productivity, location quotients. You can get one from `get_data()`")
@@ -119,8 +119,9 @@ rtt_basic <- function(data, region) {
   names(total_employment) <- LETTERS[1:19]
 
   # Split HH Consumption into Local/Employed in region
+  # Watch out for regions where there is no employment in an industry
 
-  wages_and_salaries_local <- (local_employment / total_employment) * rtt_basic["Compensation of employees", 1:19]
+  wages_and_salaries_local <- ifelse(is.nan(local_employment / total_employment), 0, local_employment / total_employment) * rtt_basic["Compensation of employees", 1:19]
   wages_and_salaries_other <- rtt_basic["Compensation of employees", 1:19] - wages_and_salaries_local
 
   rtt_hh <- rbind(rtt_basic[, -20],  c(wages_and_salaries_local, rep(0, 5)),  c(wages_and_salaries_other, rep(0, 5)))
@@ -178,7 +179,7 @@ rtt_basic <- function(data, region) {
   rtt_hh <- rbind(rtt_hh, local_employment, other_employment, total_employment)
   rownames(rtt_hh)[rownames(rtt_hh) %in% c("local_employment", "other_employment", "total_employment")] <- c("Local Employment", "Other Employment", "Total Employment")
 
-  return(rtt_hh)
+  if (type == "basic") {rtt_basic} else if (type == "household") {rtt_hh}
 
 
 }
