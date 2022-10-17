@@ -63,6 +63,11 @@ create_114_sector <- function(path = NULL) {
     dplyr::mutate(row_name = c(names(io_rows[1:114]), io_rows[115:123]),
                   .before = 1)
 
+
+
+  # Rows 1:114 in the 114 sector model are as reported in the IO table (they're the 114 sectors!)
+  # Compensation of employees, GOS & Mixed Income, Total Intermediate uses are the same
+  # 114 + 3 = 117
   ii_split_1 <- industry_industry %>%
     dplyr::filter(dplyr::row_number() <= 117)
 
@@ -148,6 +153,10 @@ create_19_sector <- function(path = NULL) {
   industry_industry_114 <- create_114$flows
   path_to_table_20 <- create_114$industry_employment_path
 
+  if (is.null(path_to_table_20)) {
+    employment <- national_employment
+  } else {employment <- read_national_employment_table(path = path_to_table_20)}
+
   q1_19 <- industry_industry_114 %>%
     tidyr::pivot_longer(-row_name,
                         names_to = 'to_ioig',
@@ -215,7 +224,7 @@ create_19_sector <- function(path = NULL) {
 
   industry_industry_flows_19 <- dplyr::bind_rows(q13, q24) %>%
     dplyr::mutate(`Total Supply` = rowSums(dplyr::across(c(21:26)))) %>%
-    dplyr::bind_rows(read_national_employment_table(path = path_to_table_20)) %>%
+    dplyr::bind_rows(employment) %>%
     tidyr::replace_na(list(`Households Final Consumption Expenditure` = 0,
                            `General Government Final Consumption Expenditure` = 0,
                            `Gross Fixed Capital Formation` = 0,
