@@ -163,20 +163,32 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
   #1. Which industries have negative exports:
   ix <- which(rtt_hh[1:19, "Exports of Goods and Services"] < 0)
 
-  z <-  rowSums(rtt_hh[ix, c(ix, 21:25), drop = FALSE])
+  z <-  rowSums(rtt_hh[ix, c(1:19, 21:25), drop = FALSE])
 
+  rtt_hh_exports <- rtt_hh
 
-  rtt_hh[ix, c(ix, 21:25)] <- rtt_hh[ix, c(ix, 21:25)] + (rtt_hh[ix, c(ix, 21:25)]/z)*rtt_hh[ix, "Exports of Goods and Services"]
+  rtt_hh_exports[ix, 1:19] <- rtt_hh_exports[ix, 1:19] + (rtt_hh_exports[ix, 1:19]/z*rtt_hh_exports[ix, "Exports of Goods and Services"])
+  rtt_hh_exports[ix, 21:25] <-  rtt_hh_exports[ix, 21:25] + (rtt_hh_exports[ix, 21:25]/z*rtt_hh_exports[ix, "Exports of Goods and Services"])
+    # Re-calculate intermediate demand and intermediate inputs
+  rtt_hh_exports[ix, "intermediate_demand"] <- rowSums(rtt_hh_exports[ix, 1:19])
+
+  # Re-calculate exports
+  rtt_hh_exports[1:19, "Exports of Goods and Services"] <- rtt_hh_exports[1:19, "Total Supply"] - rowSums(rtt_hh_exports[1:19, c(20:25), drop = FALSE])
+
+  # Adjust intermediate inputs
+  rtt_hh_exports["Intermediate Inputs", ] <- colSums(rtt_hh_exports[1:19,])
+
+  # Finish adjustments
+
 
   # Check Exports -----------------------------------------------------------
-  rtt_hh[ix, "Exports of Goods and Services"] <- rtt_hh[ix, "Total Supply"] - rowSums(rtt_hh[ix, c(20:25), drop = FALSE])
 
   total_employment <- c(total_employment, rep(0, 8))
   local_employment <- c(local_employment, rep(0, 8))
 
   other_employment <- total_employment - local_employment
 
-  rtt_hh <- rbind(rtt_hh, local_employment, other_employment, total_employment)
+  rtt_hh <- rbind(rtt_hh_exports, local_employment, other_employment, total_employment)
   rownames(rtt_hh)[rownames(rtt_hh) %in% c("local_employment", "other_employment", "total_employment")] <- c("Local Employment", "Other Employment", "Total Employment")
 
   if (type == "basic") {rtt_basic} else if (type == "household") {rtt_hh}
