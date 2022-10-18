@@ -18,12 +18,12 @@ impact_analysis <- function(region, years, impacts) {
 
   total <- rtt[c("Australian Production"), c(1:19, 21:22)]
 
-  A <- basic_price[1:19, 1:19] %*% diag(1/total[1:19])
+  A <- basic_price[1:19, 1:19] %*% diag(ifelse(is.infinite(1/total[1:19]), 0, 1/total[1:19]))
 
   inv_I_A <- solve(diag(1, 19, 19) - A)
   inv_I_A <- rbind(inv_I_A, colSums(inv_I_A[, 1:19]))
 
-  A_closed <- basic_price[1:20, 1:20] %*% diag(1/total[1:20])
+  A_closed <- basic_price[1:20, 1:20] %*% diag(ifelse(is.infinite(1/total[1:20]), 0, 1/total[1:20]))
 
   inv_I_A_bar <- solve(diag(1, 20, 20) - A_closed)
   inv_I_A_bar <- rbind(inv_I_A_bar, c(colSums(inv_I_A_bar[, 1:19]), 0))
@@ -58,7 +58,7 @@ impact_analysis <- function(region, years, impacts) {
                     "Taxes less subsidies on products and production",
                     "Local Employment",
                     "Other Employment",
-                    "Total Employment"),1:19] %*% diag(1/rtt["Australian Production", 1:19], names = T)
+                    "Total Employment"),1:19] %*% diag(ifelse(is.infinite(1/rtt["Australian Production", 1:19]), 0, 1/rtt["Australian Production", 1:19]), names = T)
 
   grp <- colSums(fte_hh_v[1:4, ])
 
