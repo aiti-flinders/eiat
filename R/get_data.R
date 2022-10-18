@@ -44,9 +44,9 @@ get_data <- function(year, path = NULL) {
       dplyr::mutate(employment = employment * fte) %>%
       dplyr::select(-c(anzsic_division_code, `FTE Employment`, `Total Employment`, fte)) %>%
       dplyr::group_by(lga) %>%
-      dplyr::mutate(region_ratio = employment/sum(employment)) %>%
+      dplyr::mutate(region_ratio = ifelse(is.nan(employment/sum(employment)), 0, employment / sum(employment))) %>%
       dplyr::ungroup() %>%
-      dplyr::left_join(fte_industry_ratio) %>%
+      dplyr::left_join(fte_industry_ratio, by = "industry") %>%
       dplyr::mutate(lq = region_ratio / national_ratio,
                     lq = ifelse(lq < 1, lq, 1))
 
