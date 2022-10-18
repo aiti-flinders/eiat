@@ -20,7 +20,8 @@ adjust_employment <- function(.data) {
                         values_to = "employment") %>%
     dplyr::group_by(lga) %>%
     dplyr::mutate(adjust_inadequate = employment + (employment/sum(employment)) * `Inadequately described`,
-                  adjust_jobs = adjust_inadequate + (adjust_inadequate/sum(adjust_inadequate)) * `Not stated`) %>%
+                  adjust_jobs = adjust_inadequate + (adjust_inadequate/sum(adjust_inadequate)) * `Not stated`,
+                  dplyr::across(c(adjust_inadequate, adjust_jobs), ~ifelse(is.nan(.x), 0, .x))) %>%
     dplyr::filter(industry != "Not applicable") %>%
     dplyr::ungroup()
 
