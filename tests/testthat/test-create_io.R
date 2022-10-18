@@ -1,9 +1,9 @@
 test_that("114 sector io table works", {
   x <- create_114_sector()
-  expect_s3_class(x, "data.frame")
-  expect_equal(nrow(x), 120)
-  expect_equal(ncol(x), 122)
-  expect_equal(sum(x[120, 2:122]), sum(x[,122]))
+  expect_s3_class(x$flows, "data.frame")
+  expect_equal(nrow(x$flows), 120)
+  expect_equal(ncol(x$flows), 122)
+  expect_equal(sum(x$flows[120, 2:122]), sum(x$flows[,122]))
 })
 
 test_that("19 sector io table works", {

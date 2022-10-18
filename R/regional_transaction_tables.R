@@ -167,10 +167,9 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
 
   rtt_hh_exports <- rtt_hh
 
-  rtt_hh_exports[ix, 1:19] <- rtt_hh_exports[ix, 1:19] + (rtt_hh_exports[ix, 1:19]/z*rtt_hh_exports[ix, "Exports of Goods and Services"])
-  rtt_hh_exports[ix, 21:25] <-  rtt_hh_exports[ix, 21:25] + (rtt_hh_exports[ix, 21:25]/z*rtt_hh_exports[ix, "Exports of Goods and Services"])
-    # Re-calculate intermediate demand and intermediate inputs
-  rtt_hh_exports[ix, "intermediate_demand"] <- rowSums(rtt_hh_exports[ix, 1:19])
+  rtt_hh_exports[ix, c(1:19, 21:25)] <- rtt_hh_exports[ix, c(1:19, 21:25)] + (rtt_hh_exports[ix, c(1:19, 21:25)]/z*rtt_hh_exports[ix, "Exports of Goods and Services"])
+
+  rtt_hh_exports[ix, "intermediate_demand"] <- rowSums(rtt_hh_exports[ix, 1:19, drop = FALSE])
 
   # Re-calculate exports
   rtt_hh_exports[1:19, "Exports of Goods and Services"] <- rtt_hh_exports[1:19, "Total Supply"] - rowSums(rtt_hh_exports[1:19, c(20:25), drop = FALSE])
@@ -178,10 +177,21 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
   # Adjust intermediate inputs
   rtt_hh_exports["Intermediate Inputs", ] <- colSums(rtt_hh_exports[1:19,])
 
+  # Balance imports
+  rtt_hh_exports["Imports", c(1:19)] <- rtt_hh_exports[1:19,"Total Supply"] - colSums(rtt_hh_exports[c("Intermediate Inputs",
+                                                                                              "Wages and Salaries - Local",
+                                                                                              "Wages and Salaries - Other",
+                                                                                              "Gross operating surplus and mixed income",
+                                                                                              "Taxes less subsidies on products and production"), 1:19])
+
+  rtt_hh_exports["Imports", "intermediate_demand"] <- rowSums(rtt_hh_exports["Imports", 1:19, drop = F])
+  # Re-calculate intermediate demand
+
+
+  #Re-calculate Australian production
+  rtt_hh_exports["Australian Production", ] <- colSums(rtt_hh_exports[20:25,])
+
   # Finish adjustments
-
-
-  # Check Exports -----------------------------------------------------------
 
   total_employment <- c(total_employment, rep(0, 8))
   local_employment <- c(local_employment, rep(0, 8))
