@@ -41,7 +41,7 @@ impact_analysis <- function(region, impacts) {
   output_df <- data.frame(
     fix.empty.names = FALSE,
     row.names = NULL,
-    "Sector" = LETTERS[1:19],
+    "Sector" = rownames(impacts),
     "Direct Output" = sector_impacts[, 1:ncol(impacts)],
     "Production Induced Output" = production_induced_output[, 1:ncol(impacts)],
     "Consumption Induced Output" = consumption_induced_output[, 1:ncol(impacts)],
@@ -72,7 +72,7 @@ impact_analysis <- function(region, impacts) {
 
   grp_df <- data.frame(
     row.names = NULL,
-    "Sector" = LETTERS[1:19],
+    "Sector" = rownames(impacts),
     "Direct GRP" = initial_grp[, 1:ncol(impacts)],
     "Production Induced GRP" = production_induced_grp[, 1:ncol(impacts)],
     "Consumption Induced GRP" = consumption_induced_grp[, 1:ncol(impacts)],
@@ -89,7 +89,7 @@ impact_analysis <- function(region, impacts) {
 
   emp_df <- data.frame(
     row.names = NULL,
-    "Sector" = LETTERS[1:19],
+    "Sector" = rownames(impacts),
     "Direct Employment" = initial_employment[, 1:ncol(impacts)],
     "Production Induced Employment" = production_induced_employment[, 1:ncol(impacts)],
     "Consumption Induced Employment" = consumption_induced_employment[, 1:ncol(impacts)],
