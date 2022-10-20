@@ -10,12 +10,11 @@
 #'
 #' @examples
 #' @importFrom magrittr %>%
-impact_analysis <- function(region, years, impacts) {
+impact_analysis <- function(region, impacts) {
 
   rtt <- lq_models[[region]]
 
   basic_price <- rtt[c(1:19,21,22), c(1:19, 21:22)]
-
   total <- rtt[c("Australian Production"), c(1:19, 21:22)]
 
   A <- basic_price[1:19, 1:19] %*% diag(ifelse(is.infinite(1/total[1:19]), 0, 1/total[1:19]))
@@ -40,13 +39,14 @@ impact_analysis <- function(region, years, impacts) {
 
 
   output_df <- data.frame(
+    fix.empty.names = FALSE,
     row.names = NULL,
     "Sector" = LETTERS[1:19],
-    "Direct Output" = sector_impacts,
-    "Production Induced Output" = production_induced_output,
-    "Consumption Induced Output" = consumption_induced_output,
-    "Flow-on Output" = production_induced_output + consumption_induced_output,
-    "Total Output" = total_output
+    "Direct Output" = sector_impacts[, 1:ncol(impacts)],
+    "Production Induced Output" = production_induced_output[, 1:ncol(impacts)],
+    "Consumption Induced Output" = consumption_induced_output[, 1:ncol(impacts)],
+    "Flow-on Output" = production_induced_output[, 1:ncol(impacts)] + consumption_induced_output[, 1:ncol(impacts)],
+    "Total Output" = total_output[, 1:ncol(impacts)]
   )
 
 
@@ -73,11 +73,11 @@ impact_analysis <- function(region, years, impacts) {
   grp_df <- data.frame(
     row.names = NULL,
     "Sector" = LETTERS[1:19],
-    "Direct GRP" = initial_grp,
-    "Production Induced GRP" = production_induced_grp,
-    "Consumption Induced GRP" = consumption_induced_grp,
-    "Flow-on GRP" = production_induced_grp + consumption_induced_grp,
-    "Total GRP" = total_grp
+    "Direct GRP" = initial_grp[, 1:ncol(impacts)],
+    "Production Induced GRP" = production_induced_grp[, 1:ncol(impacts)],
+    "Consumption Induced GRP" = consumption_induced_grp[, 1:ncol(impacts)],
+    "Flow-on GRP" = production_induced_grp[, 1:ncol(impacts)] + consumption_induced_grp[, 1:ncol(impacts)],
+    "Total GRP" = total_grp[, 1:ncol(impacts)]
   )
 
   #Employment
@@ -90,11 +90,11 @@ impact_analysis <- function(region, years, impacts) {
   emp_df <- data.frame(
     row.names = NULL,
     "Sector" = LETTERS[1:19],
-    "Direct Employment" = initial_employment,
-    "Production Induced Employment" = production_induced_employment,
-    "Consumption Induced Employment" = consumption_induced_employment,
-    "Flow-on Employment" = production_induced_employment + consumption_induced_employment,
-    "Total Employment" = total_employment
+    "Direct Employment" = initial_employment[, 1:ncol(impacts)],
+    "Production Induced Employment" = production_induced_employment[, 1:ncol(impacts)],
+    "Consumption Induced Employment" = consumption_induced_employment[, 1:ncol(impacts)],
+    "Flow-on Employment" = production_induced_employment[, 1:ncol(impacts)] + consumption_induced_employment[, 1:ncol(impacts)],
+    "Total Employment" = total_employment[, 1:ncol(impacts)]
   )
 
 
@@ -103,13 +103,13 @@ impact_analysis <- function(region, years, impacts) {
               "grp" = grp_df,
               "emp" = emp_df)
 
-  out <- lapply(out, reshape_output, impacts = impacts, years = years)
+  out <- lapply(out, reshape_output, impacts = impacts)
 
   return(out)
 
 }
 
-reshape_output <- function(data, impacts, years) {
+reshape_output <- function(data, impacts) {
 
   if (dim(impacts)[2] > 1) {
     data  %>%
@@ -120,7 +120,8 @@ reshape_output <- function(data, impacts, years) {
     data %>%
       tidyr::pivot_longer(cols = -Sector,
                           names_to = "type",
-                          values_to = as.character(years))
+                          values_to = "value") %>%
+      dplyr::mutate(year = 2022 + (1 - ncol(impacts)))
   }
 
 }
