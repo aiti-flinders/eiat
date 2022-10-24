@@ -2,7 +2,7 @@ for (i in seq_along(lq_models)) {
   test_that("Intermediate inputs = Intermediate demand", {
 
     int_use <- lq_models[[i]]["Intermediate Inputs", c(1:19, 21:26)]
-    int_demand <- lq_models[[i]][c(1:19, 21:25), "intermediate_demand"]
+    int_demand <- lq_models[[i]][c(1:19, 21:25), "Intermediate Demand"]
 
     expect_true(all.equal(sum(int_use), sum(int_demand)))
     expect_true(all.equal(sum(int_use)[1:19], sum(int_demand)[1:19]))
