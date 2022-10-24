@@ -231,6 +231,11 @@ create_19_sector <- function(path = NULL) {
                            `Changes in Inventories` = 0,
                            `Exports of Goods and Services` = 0))
 
+
+
+  industry_industry_flows_19$from_anzsic[1:19] <- anzsic_swap$name
+  colnames(industry_industry_flows_19)[1:20] <- c("Industry Sector", anzsic_swap$name)
+
   return(industry_industry_flows_19)
 
 
