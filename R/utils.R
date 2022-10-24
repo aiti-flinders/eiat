@@ -48,9 +48,9 @@ fte_employment <- function(regional_employment, national_ratios) {
   ratio <- national_ratios
 
   regional_employment %>%
-    dplyr::left_join(ratio, by = c("industry" = "name")) %>%
+    dplyr::left_join(ratio, by = c("industry" = "industry")) %>%
     dplyr::mutate(employment = employment * fte) %>%
-    dplyr::select(-c(anzsic_division_code, `FTE Employment`, `Total Employment`, fte))
+    dplyr::select(-c(`FTE Employment`, `Total Employment`, fte))
 }
 
 get_available_regions <- function(year) {
@@ -73,4 +73,8 @@ anzsic_letter_to_number <- function() {
 ioig_names_number <- function(col_no) {
   names(io_cols[col_no])
 
+}
+
+eiat_version <- function() {
+  packageVersion("eiat")
 }

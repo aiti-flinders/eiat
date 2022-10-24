@@ -13,9 +13,9 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
   }
 
   m <- data$`Australia 19` %>%
-    dplyr::filter(!from_anzsic %in% c("Total Intermediate Use", "Total Employment")) %>%
+    dplyr::filter(!`Industry Sector` %in% c("Total Intermediate Use", "Total Employment")) %>%
     dplyr::select(-`Total Industry Uses`) %>%
-    tibble::column_to_rownames("from_anzsic") %>%
+    tibble::column_to_rownames("Industry Sector") %>%
     as.matrix()
 
   sector_prod <- get_regional_sector_productivity(data, region)
@@ -115,8 +115,8 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
     dplyr::pull(employment)
 
 
-  names(local_employment) <- LETTERS[1:19]
-  names(total_employment) <- LETTERS[1:19]
+  names(local_employment) <- anzsic_swap$name
+  names(total_employment) <-  anzsic_swap$name
 
   # Split HH Consumption into Local/Employed in region
   # Watch out for regions where there is no employment in an industry
@@ -145,7 +145,7 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
 
   rtt_hh <- rtt_hh[c(1:19, 27, 25, 26, 21:24), c(1:19, 27, 25, 26, 20:24)]
 
-  rownames(rtt_hh) <- c(LETTERS[1:19],
+  rownames(rtt_hh) <- c(anzsic_swap$name,
                         "Intermediate Inputs",
                         "Wages and Salaries - Local",
                         "Wages and Salaries - Other",
@@ -200,7 +200,7 @@ rtt_basic <- function(data, region, type = c("basic", "household")) {
 
   rtt_hh <- rbind(rtt_hh_exports, local_employment, other_employment, total_employment)
   rownames(rtt_hh)[rownames(rtt_hh) %in% c("local_employment", "other_employment", "total_employment")] <- c("Local Employment", "Other Employment", "Total Employment")
-
+  colnames(rtt_hh)[colnames(rtt_hh) %in% c("intermediate_demand", "hh_consumption_employed_region", "hh_consumption_local")] <- c("Intermediate Demand", "Household Consumption - Region", "Household Consumption - Local")
   if (type == "basic") {rtt_basic} else if (type == "household") {rtt_hh}
 
 
