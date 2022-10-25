@@ -20,7 +20,7 @@ impact_analysis <- function(region, impacts) {
   A <- basic_price[1:19, 1:19] %*% diag(ifelse(is.infinite(1/total[1:19]), 0, 1/total[1:19]))
 
   inv_I_A <- solve(diag(1, 19, 19) - A)
-  inv_I_A <- rbind(inv_I_A, colSums(inv_I_A[, 1:19]))
+  inv_I_A <- rbind(inv_I_A, colSums(inv_I_A))
 
   A_closed <- basic_price[1:20, 1:20] %*% diag(ifelse(is.infinite(1/total[1:20]), 0, 1/total[1:20]))
 
