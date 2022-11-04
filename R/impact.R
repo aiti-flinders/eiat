@@ -105,6 +105,8 @@ impact_analysis <- function(region, impacts) {
 
   out <- lapply(out, reshape_output, impacts = impacts)
 
+  out$region <- region
+
   return(out)
 
 }
