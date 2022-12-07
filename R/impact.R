@@ -107,6 +107,8 @@ impact_analysis <- function(region, impacts) {
 
   out$region <- region
 
+  out$input <- impacts
+
   return(out)
 
 }
