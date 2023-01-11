@@ -60,5 +60,5 @@ impact_plot <- function(data, type, indicator, background_colour = "grey") {
 }
 
 create_data <- function(n) {
-  matrix(round(runif(19*n, 0, 5)), nrow = 19, ncol = n, dimnames = list(eiat:::anzsic_swap$name, 2022:(2022+(n-1))))
+  matrix(round(runif(19*n, 0, 5)), nrow = 19, ncol = n, dimnames = list(eiat:::anzsic_swap$name, 2023:(2023+(n-1))))
 }

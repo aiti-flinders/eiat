@@ -126,7 +126,7 @@ reshape_output <- function(data, impacts) {
       tidyr::pivot_longer(cols = -Sector,
                           names_to = "type",
                           values_to = "value") %>%
-      dplyr::mutate(year = 2022 + (1 - ncol(impacts)),
+      dplyr::mutate(year = 2023 + (1 - ncol(impacts)),
                     type = trimws(gsub("\\.", " ", type)))
   }
 
