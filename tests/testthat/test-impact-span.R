@@ -1,4 +1,4 @@
-years <- 2022:2031
+years <- 2023:2032
 impacts <- matrix(1, nrow = 19, ncol = length(years), byrow = T, dimnames = list(eiat:::anzsic_swap$letter, years))
 
 for (i in seq_along(lq_models)) {
