@@ -2,9 +2,10 @@
 
 export(create_114_sector)
 export(create_19_sector)
+export(get_data)
 export(get_local_employment)
-export(get_regional_employment)
 export(impact_analysis)
 export(impact_plot)
 export(rtt_basic)
+import(mathjaxr)
 importFrom(magrittr,"%>%")

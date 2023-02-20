@@ -1,22 +1,27 @@
 Package: eiat
-Title: What the Package Does (One Line, Title Case)
+Title: Create Regional Input-Output Tables
 Version: 0.1.4
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Hamish",
+           family = "Gamble",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "hamish.gamble@flinders.edu.au",
+           comment = c(ORCID = "0000-0003-1277-1227"))
+Description: This package enables the creation of 19 Sector Input-Output Tables for Australian Local Government Areas 
+            for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for
+            the Australian Urban Research Infrastructure Network (AURIN). This package includes pre-calculated Regional Input-Output 
+            tables for the 556 Local Government Areas defined by the Australian Bureau of Statistics as at 2021. The Regional 
+            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release)
+License: CC0
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+RdMacros: mathjaxr
 Imports: 
     dplyr,
     magrittr,
+    mathjaxr,
     readabs,
     tidyr
 Depends: 
@@ -24,3 +29,4 @@ Depends:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://aiti-flinders.github.io/eiat/

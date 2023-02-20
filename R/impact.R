@@ -1,14 +1,19 @@
-#' Title
+#' Impact Analysis
 #'
-#' @param region
-#' @param year
-#' @param path
-#' @param impacts
+#' @description Conduct an impact analysis assessment for a Local Government Area.
+#'
+#' @param region Local Government Area
+#' @param impacts A matrix with 19 rows and at least 1 column containing expenditure impacts for each of the 19 sectors.
+#' The matrix must have rownames equal to the 19 industry sectors.
 #'
 #' @return
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' impacts <- matrix(data = 1, nrow = 19, ncol = 1, dimnames = list(anzsic_swap$name))
+#' impact_analysis("Adelaide", impacts)
+#' }
 #' @importFrom magrittr %>%
 impact_analysis <- function(region, impacts) {
 
