@@ -9,7 +9,8 @@
             for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for
             the Australian Urban Research Infrastructure Network (AURIN). This package includes pre-calculated Regional Input-Output 
             tables for the 556 Local Government Areas defined by the Australian Bureau of Statistics as at 2021. The Regional 
-            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release)">
+            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication 
+            (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release).">
 <title>Create Regional Input-Output Tables • eiat</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
@@ -20,7 +21,8 @@
             for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for
             the Australian Urban Research Infrastructure Network (AURIN). This package includes pre-calculated Regional Input-Output 
             tables for the 556 Local Government Areas defined by the Australian Bureau of Statistics as at 2021. The Regional 
-            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release)">
+            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication 
+            (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release).">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="index.html">eiat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,14 +61,34 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="aiti-aurin-economic-impact-assessment-tool">AITI-AURIN Economic Impact Assessment Tool<a class="anchor" aria-label="anchor" href="#aiti-aurin-economic-impact-assessment-tool"></a>
+<div class="page-header"><h1 id="economic-impact-assessment-tool">Economic Impact Assessment Tool<a class="anchor" aria-label="anchor" href="#economic-impact-assessment-tool"></a>
 </h1></div>
-<p>This repository contains the data behind the Economic Impact Assessment Tool including: - National Input-Output Tables - Regional Input-Output Tables</p>
+<!-- badges: start -->
+
+<!-- badges: end -->
+<p>The goal of <code>eiat</code> is to consolidate the production of Regional Input-Output Tables at the Local Government Area level for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for the Australian Urban Research Infrastructure Network (AURIN). The EIAT itself can be found <a href="https://github.com/aiti-flinders/eiat-app" title="Economic Impact Assessment Tool" class="external-link">here.</a> This includes the automatic updating of Regional Input-Output Tables each year when the Australian Bureau of Statistics updates the Australian National Accounts: Input-Output Tables.</p>
+<div class="section level2">
+<h2 id="continuous-integration">Continuous integration<a class="anchor" aria-label="anchor" href="#continuous-integration"></a>
+</h2>
+<p>The Regional Input-Output Tables are derived from two main sources, both from the Australian Bureau of Statistics.</p>
+<div class="section level3">
+<h3 id="australian-national-accounts-input-output-tables">Australian National Accounts: Input-Output Tables<a class="anchor" aria-label="anchor" href="#australian-national-accounts-input-output-tables"></a>
+</h3>
+<p>The National Accounts are updated on an annual basis. This package takes the 114 sector Input-Output Industry Group flow table <a href="https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500105.xlsx" class="external-link">Table 5. Industry by industry flow table (direct allocation of imports)</a> and FTE and total employment by industry table <a href="https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500120.xlsx" class="external-link">Table 20. Employment by industry</a> consolidates it to a 19 sector ANZSIC flow table. The Australian 19 sector Input-Output table is the basis for Regional Input-Output tables.</p>
+<p>Each Friday between 2:00 AM and 3:00 AM AEDT a CI process will check for updates to these tables, and if necessary, update the Regional Input-Output tables.</p>
+</div>
+<div class="section level3">
+<h3 id="employment-by-industry-data-from-the-2011-2016-and-2021-australian-census">Employment by industry data from the 2011, 2016 and 2021 Australian Census<a class="anchor" aria-label="anchor" href="#employment-by-industry-data-from-the-2011-2016-and-2021-australian-census"></a>
+</h3>
+<p>Census data is updated about every 5 years and is accessible through the Austalian Bureau of Statistics TableBuilder Pro. API access is currently not available for TableBuilder data. If this does not change by the 2026 Census, employment by industry data will need to be integrated into <code>eiat</code> package manually.</p>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li>CC0</li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small>CC0</small></li>
 </ul>
 </div>
 
@@ -85,7 +107,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
