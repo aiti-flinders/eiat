@@ -20,7 +20,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 RdMacros: mathjaxr
 Imports: 
-    aititheme,
+    aititheme (>= 0.0.0.9000),
     dplyr,
     ggplot2,
     glue,
@@ -41,3 +41,5 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://aiti-flinders.github.io/eiat/
+Remotes:  
+    aiti-flinders/aititheme
