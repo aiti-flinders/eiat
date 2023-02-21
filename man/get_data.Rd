@@ -7,7 +7,7 @@
 get_data(year)
 }
 \arguments{
-\item{year}{}
+\item{year}{Census year}
 }
 \value{
 

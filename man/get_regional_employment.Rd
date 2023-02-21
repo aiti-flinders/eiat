@@ -32,6 +32,6 @@ for 2011, 2016 and 2021.
 get_regional_employment("Adelaide", 2021)
 # In the 2016 Census, the Adelaide LGA is called 'Adelaide (C)' so the following will not work.
 \dontrun{
-get_local_employment("Adelaide" 2016)
+get_regional_employment("Adelaide" 2016)
 }
 }
