@@ -1,5 +1,45 @@
-# AITI-AURIN Economic Impact Assessment Tool
 
-This repository contains the data behind the Economic Impact Assessment Tool including:
-- National Input-Output Tables
-- Regional Input-Output Tables
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# Economic Impact Assessment Tool
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of `eiat` is to consolidate the production of Regional
+Input-Output Tables at the Local Government Area level for use with the
+Economic Impact Assessment Tool (EIAT) developed by the Australian
+Industrial Transformation Institute for the Australian Urban Research
+Infrastructure Network (AURIN). The EIAT itself can be found
+[here.](https://github.com/aiti-flinders/eiat-app "Economic Impact Assessment Tool")
+This includes the automatic updating of Regional Input-Output Tables
+each year when the Australian Bureau of Statistics updates the
+Australian National Accounts: Input-Output Tables.
+
+## Continuous integration
+
+The Regional Input-Output Tables are derived from two main sources, both
+from the Australian Bureau of Statistics.
+
+### Australian National Accounts: Input-Output Tables
+
+The National Accounts are updated on an annual basis. This package takes
+the 114 sector Input-Output Industry Group flow table [Table 5. Industry
+by industry flow table (direct allocation of
+imports)](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500105.xlsx)
+and FTE and total employment by industry table [Table 20. Employment by
+industry](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500120.xlsx)
+consolidates it to a 19 sector ANZSIC flow table. The Australian 19
+sector Input-Output table is the basis for Regional Input-Output tables.
+
+Each Friday between 2:00 AM and 3:00 AM AEDT a CI process will check for
+updates to these tables, and if necessary, update the Regional
+Input-Output tables.
+
+### Employment by industry data from the 2011, 2016 and 2021 Australian Census
+
+Census data is updated about every 5 years and is accessible through the
+Austalian Bureau of Statistics TableBuilder Pro. API access is currently
+not available for TableBuilder data. If this does not change by the 2026
+Census, employment by industry data will need to be integrated into
+`eiat` package manually.
