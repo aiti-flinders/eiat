@@ -32,9 +32,9 @@ impact_plot <- function(data, type, indicator, background_colour = "grey") {
 
     data[[indicator]] %>%
       dplyr::filter(grepl("Direct|Flow on|Total", type)) %>%
-      dplyr::group_by(year, type) %>%
-      dplyr::summarise(value = sum(value), .groups = "drop")  %>%
-      ggplot2::ggplot(ggplot2::aes(x = factor(year), y = value, fill = type, group = type)) +
+      dplyr::group_by(.data$year, type) %>%
+      dplyr::summarise(value = sum(.data$value), .groups = "drop")  %>%
+      ggplot2::ggplot(ggplot2::aes(x = factor(.data$year), y = .data$value, fill = type, group = type)) +
       ggplot2::geom_col(position = "dodge") +
       aititheme::theme_aiti(colour = background_colour) +
       aititheme::scale_fill_aiti() +
@@ -45,9 +45,9 @@ impact_plot <- function(data, type, indicator, background_colour = "grey") {
   } else {
     data[[indicator]] %>%
       dplyr::filter(grepl("Direct|Flow on|Total", type)) %>%
-      dplyr::group_by(year, type) %>%
-      dplyr::summarise(value = sum(value), .groups = "drop")  %>%
-      ggplot2::ggplot(ggplot2::aes(x = factor(year), y = value, col = type, group = type)) +
+      dplyr::group_by(.data$year, type) %>%
+      dplyr::summarise(value = sum(.data$value), .groups = "drop")  %>%
+      ggplot2::ggplot(ggplot2::aes(x = factor(.data$year), y = .data$value, col = type, group = type)) +
       ggplot2::geom_line() +
       aititheme::theme_aiti(colour = background_colour) +
       aititheme::scale_colour_aiti() +
@@ -59,6 +59,4 @@ impact_plot <- function(data, type, indicator, background_colour = "grey") {
 
 }
 
-create_data <- function(n) {
-  matrix(round(runif(19*n, 0, 5)), nrow = 19, ncol = n, dimnames = list(eiat:::anzsic_swap$name, 2023:(2023+(n-1))))
-}
+

@@ -11,7 +11,8 @@ Description: This package enables the creation of 19 Sector Input-Output Tables 
             for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for
             the Australian Urban Research Infrastructure Network (AURIN). This package includes pre-calculated Regional Input-Output 
             tables for the 556 Local Government Areas defined by the Australian Bureau of Statistics as at 2021. The Regional 
-            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release)
+            Input-Output Tables are derived from the Australian National Accounts: Input-Output Tables publication 
+            (https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release).
 License: CC0
 Encoding: UTF-8
 LazyData: true
@@ -19,11 +20,21 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 RdMacros: mathjaxr
 Imports: 
+    aititheme,
     dplyr,
+    ggplot2,
+    glue,
+    here,
     magrittr,
     mathjaxr,
     readabs,
-    tidyr
+    readxl,
+    rlang,
+    scales,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
 Depends: 
     R (>= 2.10)
 Suggests: 

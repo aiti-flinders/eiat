@@ -29,16 +29,16 @@ rtt_basic <- function(data = get_data(2021), region, type = "household") {
   }
 
   m <- data$`Australia 19` %>%
-    dplyr::filter(!`Industry Sector` %in% c("Total Intermediate Use", "Total Employment")) %>%
-    dplyr::select(-`Total Industry Uses`) %>%
+    dplyr::filter(!.data$`Industry Sector` %in% c("Total Intermediate Use", "Total Employment")) %>%
+    dplyr::select(-"Total Industry Uses") %>%
     tibble::column_to_rownames("Industry Sector") %>%
     as.matrix()
 
   sector_prod <- get_regional_sector_productivity(data, region)
 
   location_quotient <- data$`Location Quotients` %>%
-    dplyr::filter(lga == region) %>%
-    dplyr::pull(lq)
+    dplyr::filter(.data$lga == region) %>%
+    dplyr::pull(.data$lq)
 
   region_fte_employment <- get_regional_employment(region, data$Year) %>%
     fte_employment(national_ratios = data$`FTE Ratios`)
@@ -92,7 +92,7 @@ rtt_basic <- function(data = get_data(2021), region, type = "household") {
                         c("General Government Final Consumption Expenditure", "Gross Fixed Capital Formation", "Changes in Inventories")] / m["FTE Employment", "Total Supply"]
 
   other_multiplier <- other_multiplier*(region_fte_employment %>%
-                                          dplyr::summarise(sum(employment)) %>%
+                                          dplyr::summarise(sum(.data$employment)) %>%
                                           dplyr::pull())
 
   rtt_multiplier <- c(sector_prod, hh_multiplier, other_multiplier)
@@ -124,11 +124,11 @@ rtt_basic <- function(data = get_data(2021), region, type = "household") {
 
   local_employment <- get_local_employment(region, data$Year) %>%
     fte_employment(national_ratios = data$`FTE Ratios`) %>%
-    dplyr::pull(employment)
+    dplyr::pull(.data$employment)
 
   total_employment <- get_regional_employment(region, data$Year) %>%
     fte_employment(national_ratios = data$`FTE Ratios`) %>%
-    dplyr::pull(employment)
+    dplyr::pull(.data$employment)
 
 
   names(local_employment) <- anzsic_swap$name

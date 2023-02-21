@@ -37,15 +37,15 @@ get_local_employment <- function(region, year, adjust = TRUE) {
 
 
   employment <- live_and_work %>%
-    dplyr::filter(dplyr::if_all(c(lga_pow, lga_ur), ~ .x == region),
-                  year == {{year}}) %>%
+    dplyr::filter(dplyr::if_all(c("lga_pow", "lga_ur"), ~ .x == region),
+                  .data$year == {{year}}) %>%
     dplyr::mutate(lga = region, .before = 1) %>%
-    dplyr::select(-c(lga_pow, lga_ur))
+    dplyr::select(-c("lga_pow", "lga_ur"))
 
   if (adjust) {
     employment %>%
       adjust_employment() %>%
-      dplyr::select(lga, industry, employment = adjust_jobs)
+      dplyr::select("lga", "industry", employment = "adjust_jobs")
   } else {
     employment
   }
@@ -70,13 +70,13 @@ get_local_employment <- function(region, year, adjust = TRUE) {
 #' @param adjust logical. The default (TRUE) adjusts the data to remove Inadequately described and Not stated.
 #'
 #' @return A dataframe with the regional employment of `region` by industry.
-#' @export get_local_employment
+#' @export get_regional_employment
 #'
 #' @examples
 #' get_regional_employment("Adelaide", 2021)
 #' # In the 2016 Census, the Adelaide LGA is called 'Adelaide (C)' so the following will not work.
 #' \dontrun{
-#' get_local_employment("Adelaide" 2016)
+#' get_regional_employment("Adelaide" 2016)
 #' }
 get_regional_employment <- function(region, year, adjust = TRUE) {
 
@@ -94,13 +94,13 @@ get_regional_employment <- function(region, year, adjust = TRUE) {
 
 
   employment <- work %>%
-    dplyr::filter(lga_pow == region,
-                  year == {{year}}) %>%
-    dplyr::rename(lga = lga_pow)
+    dplyr::filter(.data$lga_pow == region,
+                  .data$year == {{year}}) %>%
+    dplyr::rename(lga = "lga_pow")
 
   if (adjust) {
     employment %>%
       adjust_employment() %>%
-      dplyr::select(lga, industry, employment = adjust_jobs)
+      dplyr::select("lga", "industry", employment = "adjust_jobs")
   }
 }
