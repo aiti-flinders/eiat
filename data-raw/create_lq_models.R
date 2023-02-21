@@ -21,5 +21,5 @@ lq_models <- create_lq(nat_data, 2021, "household")
 lq_basic <- create_lq(nat_data, 2021, "basic")
 
 
-usethis::use_data(lq_models, compress = "xz", overwrite = TRUE)
-usethis::use_data(lq_basic, compress = "xz", overwrite = TRUE)
+usethis::use_data(lq_models, compress = "gzip", overwrite = TRUE)
+usethis::use_data(lq_basic, compress = "gzip", overwrite = TRUE)

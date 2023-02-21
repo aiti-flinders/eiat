@@ -2,5 +2,5 @@
 library(eiat)
 national_19 <- create_19_sector()
 
-usethis::use_data(national_19, compress = "xz", overwrite = TRUE)
+usethis::use_data(national_19, compress = "gzip", overwrite = TRUE)
 
