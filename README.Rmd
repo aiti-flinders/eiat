@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 The goal of `eiat` is to consolidate the production of Regional Input-Output Tables at the Local Government Area level for use with the Economic Impact Assessment Tool (EIAT) developed by the Australian Industrial Transformation Institute for the Australian Urban Research Infrastructure Network (AURIN). The EIAT itself can be found [here.](https://github.com/aiti-flinders/eiat-app "Economic Impact Assessment Tool") This includes the automatic updating of Regional Input-Output Tables each year when the Australian Bureau of Statistics updates the Australian National Accounts: Input-Output Tables.

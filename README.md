@@ -4,6 +4,9 @@
 # Economic Impact Assessment Tool
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aiti-flinders/eiat/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 The goal of `eiat` is to consolidate the production of Regional
