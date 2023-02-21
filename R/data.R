@@ -35,12 +35,21 @@
 #'
 "national_19"
 
-#' Regional Input Output Tables
+#' Regional Input Output Tables (Household Split)
 #'
 #' Regional Input-Output tables derived using the location quotient method from the Australian 19 Sector Input-Output table.
+#' These tables split household expenditure and wages and salaries by those who live and work in the region and outside the region.
 #'
 #' @format ## `lq_models`
 #' A list of 556 matrices with 29 rows and 27 columns.
 "lq_models"
+
+#' Regional Input Output Tables
+#'
+#' Regional Input-Output tables derived using the location quotient method from the Australian 19 Sector Input-Output table.
+#'
+#' @format ## `lq_basic`
+#' A list of 556 matrices with 29 rows and 27 columns.
+"lq_basic"
 
 
