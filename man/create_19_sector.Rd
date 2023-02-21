@@ -6,6 +6,10 @@
 \usage{
 create_19_sector(path = NULL)
 }
+\arguments{
+\item{path}{path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
+NULL by default which uses the \code{industry_flows} data installed with the package.}
+}
 \value{
 tibble of the industry-industry flows between 19 ANZSIC Sectors for Australia.
 }

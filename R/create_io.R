@@ -15,18 +15,23 @@
 #'
 #' @examples
 #' create_114_sector()
-#' create_114_sector(path = "local_data")
+#' \dontrun{
+#' create_114_sector(path = "")
+#' }
 #'
 #' @source https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release
 #' @return Silently returns a list with the 114 sector input-output table ("flows"), and the path to Table 5 and Table 20.
 #' @export create_114_sector
+#' @importFrom stats complete.cases
+#' @importFrom tidyselect where
+#' @importFrom rlang .data
 #'
 create_114_sector <- function(path = NULL) {
 
   # Need a folder with table 5 (industry flows) and table 20 (employment by industry)
   if (is.null(path)) {
 
-    industry_flows <- industry_flows[complete.cases(industry_flows), ]
+    industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
     path_to_table_5 <- NULL
     path_to_table_20 <- NULL
 
@@ -43,7 +48,7 @@ create_114_sector <- function(path = NULL) {
     if (any(file.exists(path_to_table_5))) {
 
       industry_flows <- read_industry_flow_table(path = path_to_table_5)
-      industry_flows <- industry_flows[complete.cases(industry_flows), ]
+      industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
 
 
       message(glue::glue("Reading {path_to_table_5[which(file.exists(path_to_table_5))]}"))
@@ -74,10 +79,10 @@ create_114_sector <- function(path = NULL) {
     dplyr::rename_with(.cols = c(1:114), ~names(io_cols[1:114])) %>%
     dplyr::mutate(`Gross Fixed Capital Formation` = rowSums(dplyr::across(dplyr::contains("Fixed Capital Formation"))),
                   .after = "General Government Final Consumption Expenditure") %>%
-    dplyr::select(-`Private Gross Fixed Capital Formation`,
-                  -`Public Corporations Gross Fixed Capital Formation`,
-                  -`General Government Gross Fixed Capital Formation`,
-                  -`Final Uses (Q1 to Q7)`) %>%
+    dplyr::select(-"Private Gross Fixed Capital Formation",
+                  -"Public Corporations Gross Fixed Capital Formation",
+                  -"General Government Gross Fixed Capital Formation",
+                  -"Final Uses (Q1 to Q7)") %>%
     dplyr::mutate(row_name = c(names(io_rows[1:114]), io_rows[115:123]),
                   .before = 1)
 
@@ -90,55 +95,62 @@ create_114_sector <- function(path = NULL) {
     dplyr::filter(dplyr::row_number() <= 117)
 
   ii_split_2 <- industry_industry %>%
-    dplyr::filter(!row_name %in% ii_split_1$row_name) %>%
-    tidyr::pivot_longer(cols = -row_name, names_to = "industry") %>%
-    tidyr::pivot_wider(industry, names_from = row_name, values_from = value) %>%
-    dplyr::mutate("Taxes less subsidies on products and production" = `Taxes less subsidies on products` + `Other taxes less subsidies on production`,
+    dplyr::filter(!.data$row_name %in% ii_split_1$row_name) %>%
+    tidyr::pivot_longer(cols = -"row_name", names_to = "industry") %>%
+    tidyr::pivot_wider(id_cols = "industry", names_from = "row_name", values_from = "value") %>%
+    dplyr::mutate("Taxes less subsidies on products and production" = .data$`Taxes less subsidies on products` + .data$`Other taxes less subsidies on production`,
                   .before = "Complementary imports") %>%
-    dplyr::mutate("Imports" = ifelse(industry %in% c("Households Final Consumption Expenditure",
+    dplyr::mutate("Imports" = ifelse(.data$industry %in% c("Households Final Consumption Expenditure",
                                                      "General Government Final Consumption Expenditure",
                                                      "Gross Fixed Capital Formation",
                                                      "Changes in Inventories",
                                                      "Exports of Goods and Services"),
                                      0,
-                                     `Complementary imports` + `Competing imports`),
+                                     .data$`Complementary imports` + .data$`Competing imports`),
                   .before = "Australian Production") %>%
-    dplyr::select(-`Taxes less subsidies on products`,
-                  -`Other taxes less subsidies on production`,
-                  -`Complementary imports`,
-                  -`Competing imports`,
-                  -`Value Added`) %>%
-    tidyr::pivot_longer(cols = -industry,
+    dplyr::select(-"Taxes less subsidies on products",
+                  -"Other taxes less subsidies on production",
+                  -"Complementary imports",
+                  -"Competing imports",
+                  -"Value Added") %>%
+    tidyr::pivot_longer(cols = -"industry",
                         names_to = "row_name") %>%
-    tidyr::pivot_wider(row_name, names_from = industry, values_from = value)
+    tidyr::pivot_wider(id_cols = "row_name",
+                       names_from = "industry",
+                       values_from = "value")
 
 
   industry_industry_adj <- dplyr::bind_rows(ii_split_1, ii_split_2)
 
   ii_split_3 <- industry_industry_adj %>%
-    dplyr::filter(row_name %in% c("Total Intermediate Use",
+    dplyr::filter(.data$row_name %in% c("Total Intermediate Use",
                                   "Compensation of employees",
                                   "Gross operating surplus & mixed income",
                                   "Taxes less subsidies on products and production",
                                   "Imports",
                                   "Australian Production")) %>%
-    tidyr::pivot_longer(cols = -row_name, names_to = "industry") %>%
-    tidyr::pivot_wider(industry, names_from = row_name, values_from = value) %>%
-    dplyr::mutate("Australian Production" = ifelse(industry %in% c("Households Final Consumption Expenditure",
+    tidyr::pivot_longer(cols = -"row_name",
+                        names_to = "industry") %>%
+    tidyr::pivot_wider(id_cols = "industry",
+                       names_from = "row_name",
+                       values_from = "value") %>%
+    dplyr::mutate("Australian Production" = ifelse(.data$industry %in% c("Households Final Consumption Expenditure",
                                                                    "General Government Final Consumption Expenditure",
                                                                    "Gross Fixed Capital Formation",
                                                                    "Exports of Goods and Services"),
-                                                   `Total Intermediate Use` + `Taxes less subsidies on products and production`,
-                                                   `Australian Production`),
-                  `Australian Production` = ifelse(industry == "Changes in Inventories",
-                                                   `Total Intermediate Use` + `Taxes less subsidies on products and production`,
-                                                   `Australian Production`)) %>%
-    tidyr::pivot_longer(cols = -industry,
+                                                   .data$`Total Intermediate Use` + .data$`Taxes less subsidies on products and production`,
+                                                   .data$`Australian Production`),
+                  `Australian Production` = ifelse(.data$industry == "Changes in Inventories",
+                                                   .data$`Total Intermediate Use` + .data$`Taxes less subsidies on products and production`,
+                                                   .data$`Australian Production`)) %>%
+    tidyr::pivot_longer(cols = -"industry",
                         names_to = "row_name") %>%
-    tidyr::pivot_wider(row_name, names_from = industry, values_from = value)
+    tidyr::pivot_wider(id_cols = "row_name",
+                       names_from = "industry",
+                       values_from = "value")
 
   ii_split_4 <- industry_industry_adj %>%
-    dplyr::filter(!row_name %in% c("Total Intermediate Use",
+    dplyr::filter(!.data$row_name %in% c("Total Intermediate Use",
                                    "Compensation of employees",
                                    "Gross operating surplus & mixed income",
                                    "Taxes less subsidies on products and production",
@@ -147,9 +159,9 @@ create_114_sector <- function(path = NULL) {
 
 
   industry_industry_114 <- dplyr::bind_rows(ii_split_4, ii_split_3) %>%
-    dplyr::mutate("Total Supply" = ifelse(row_name %in% c("Imports", "Australian Production"),
+    dplyr::mutate("Total Supply" = ifelse(.data$row_name %in% c("Imports", "Australian Production"),
                                           rowSums(dplyr::across("Total Industry Uses":"Exports of Goods and Services")),
-                                          `Total Supply`))
+                                          .data$`Total Supply`))
 
   out <- list("flows" = industry_industry_114,
               "io_path" = path_to_table_5,
@@ -159,6 +171,9 @@ create_114_sector <- function(path = NULL) {
 }
 
 #' Create 19 Sector Input-Output Table.
+#'
+#' @param path path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
+#' NULL by default which uses the `industry_flows` data installed with the package.
 #'
 #' @description
 #' Creates a 19 Sector Input-Output Table by aggregating the 114 Sector Input-Output Table (see: `create_114_sector()`)
@@ -180,49 +195,57 @@ create_19_sector <- function(path = NULL) {
   } else {employment <- read_national_employment_table(path = path_to_table_20)}
 
   q1_19 <- industry_industry_114 %>%
-    tidyr::pivot_longer(-row_name,
+    tidyr::pivot_longer(cols = -"row_name",
                         names_to = 'to_ioig',
                         values_to = "flow") %>%
-    dplyr::filter(dplyr::if_all(c(row_name, to_ioig), ~.x %in% names(io_rows[1:114]))) %>%
+    dplyr::filter(dplyr::if_all(c("row_name", "to_ioig"), ~.x %in% names(io_rows[1:114]))) %>%
     dplyr::left_join(ioig_anzsic_div, by = c("row_name" = "ioig")) %>%
-    dplyr::select(from_anzsic = anzsic_division_code, to_ioig, flow) %>%
+    dplyr::select(from_anzsic = "anzsic_division_code",
+                  "to_ioig",
+                  "flow") %>%
     dplyr::left_join(ioig_anzsic_div, by = c("to_ioig" = "ioig")) %>%
-    dplyr::select(from_anzsic, to_anzsic = anzsic_division_code, flow) %>%
-    dplyr::group_by(from_anzsic, to_anzsic) %>%
-    dplyr::summarise(flow = sum(flow), .groups = "drop") %>%
-    tidyr::pivot_wider(names_from = to_anzsic, values_from = flow)
+    dplyr::select("from_anzsic",
+                  to_anzsic = "anzsic_division_code",
+                  "flow") %>%
+    dplyr::group_by(.data$from_anzsic, .data$to_anzsic) %>%
+    dplyr::summarise(flow = sum(.data$flow), .groups = "drop") %>%
+    tidyr::pivot_wider(names_from = "to_anzsic", values_from = "flow")
 
   q2_19 <- industry_industry_114 %>%
-    dplyr::filter(!row_name %in% c(names(io_rows[1:114]), "Total Intermediate Use")) %>%
+    dplyr::filter(!.data$row_name %in% c(names(io_rows[1:114]), "Total Intermediate Use")) %>%
     dplyr::select(1:115) %>%
-    tidyr::pivot_longer(-row_name,
+    tidyr::pivot_longer(cols = -"row_name",
                         names_to = "to_ioig",
                         values_to = "flow") %>%
     dplyr::left_join(ioig_anzsic_div, by = c("to_ioig" = "ioig")) %>%
-    dplyr::select(from_anzsic = row_name, to_anzsic = anzsic_division_code, flow) %>%
-    dplyr::group_by(from_anzsic, to_anzsic) %>%
-    dplyr::summarise(flow = sum(flow), .groups = "drop") %>%
-    tidyr::pivot_wider(names_from = to_anzsic,
-                       values_from = flow) %>%
-    dplyr::arrange(factor(from_anzsic, levels = c("Compensation of employees",
+    dplyr::select(from_anzsic = "row_name",
+                  to_anzsic = "anzsic_division_code",
+                  "flow") %>%
+    dplyr::group_by(.data$from_anzsic, .data$to_anzsic) %>%
+    dplyr::summarise(flow = sum(.data$flow), .groups = "drop") %>%
+    tidyr::pivot_wider(names_from = "to_anzsic",
+                       values_from = "flow") %>%
+    dplyr::arrange(factor(.data$from_anzsic, levels = c("Compensation of employees",
                                                   "Gross operating surplus & mixed income",
                                                   "Taxes less subsidies on products and production",
                                                   "Imports",
                                                   "Australian Production")))
 
   q3_19 <- industry_industry_114 %>%
-    dplyr::filter(row_name %in% names(io_rows[1:114])) %>%
+    dplyr::filter(.data$row_name %in% names(io_rows[1:114])) %>%
     dplyr::select(c(1, 117:121)) %>%
-    tidyr::pivot_longer(cols = -row_name,
+    tidyr::pivot_longer(cols = -"row_name",
                         names_to = "to_ioig",
                         values_to = "flow") %>%
     dplyr::left_join(ioig_anzsic_div, by = c("row_name" = "ioig")) %>%
-    dplyr::select(from_anzsic = anzsic_division_code, to_anzsic = to_ioig, flow) %>%
-    dplyr::group_by(from_anzsic, to_anzsic) %>%
-    dplyr::summarise(flow = sum(flow), .groups = "drop") %>%
-    tidyr::pivot_wider(names_from = to_anzsic,
-                       values_from = flow) %>%
-    dplyr::select(from_anzsic,
+    dplyr::select(from_anzsic = "anzsic_division_code",
+                  to_anzsic = "to_ioig",
+                  "flow") %>%
+    dplyr::group_by(.data$from_anzsic, .data$to_anzsic) %>%
+    dplyr::summarise(flow = sum(.data$flow), .groups = "drop") %>%
+    tidyr::pivot_wider(names_from = "to_anzsic",
+                       values_from = "flow") %>%
+    dplyr::select("from_anzsic",
                   "Households Final Consumption Expenditure",
                   "General Government Final Consumption Expenditure",
                   "Gross Fixed Capital Formation",
@@ -230,12 +253,13 @@ create_19_sector <- function(path = NULL) {
                   "Exports of Goods and Services")
 
   q4_19 <- industry_industry_114 %>%
-    dplyr::filter(row_name %in% c("Compensation of employees", "Gross operating surplus & mixed income", "Taxes less subsidies on products and production", "Imports", "Australian Production")) %>%
+    dplyr::filter(.data$row_name %in% c("Compensation of employees", "Gross operating surplus & mixed income", "Taxes less subsidies on products and production", "Imports", "Australian Production")) %>%
     dplyr::select(c(1, 117:121)) %>%
-    dplyr::rename(from_anzsic = row_name)
+    dplyr::rename(from_anzsic = "row_name")
 
   q13 <- dplyr::left_join(q1_19, q3_19, by = "from_anzsic") %>%
-    dplyr::mutate(`Total Industry Uses` = rowSums(dplyr::across(c(2:20))), .before = "Households Final Consumption Expenditure") %>%
+    dplyr::mutate(`Total Industry Uses` = rowSums(dplyr::across(c(2:20))),
+                  .before = "Households Final Consumption Expenditure") %>%
     dplyr::bind_rows(
       dplyr::summarise(., dplyr::across(where(is.character), ~"Total Intermediate Use") ,
                        dplyr::across(where(is.double), sum))

@@ -44,7 +44,7 @@
 #'
 #'
 #'
-#' @param year
+#' @param year Census year
 #'
 #' @return
 #' @export
@@ -58,48 +58,55 @@ get_data <- function(year) {
     m <- create_19_sector()
 
     fte_ratios <- m %>%
-    dplyr::filter(`Industry Sector` %in% c("FTE Employment", "Total Employment")) %>%
+    dplyr::filter(.data$`Industry Sector` %in% c("FTE Employment", "Total Employment")) %>%
       tidyr::pivot_longer(cols = 2:20,
                           names_to = "industry",
                           values_to = "value") %>%
-      dplyr::select(industry, `Industry Sector`, value) %>%
-      tidyr::pivot_wider(names_from = `Industry Sector`,
-                         values_from = value) %>%
-      dplyr::mutate(fte = `FTE Employment`/`Total Employment`)
+      dplyr::select("industry",
+                    "Industry Sector",
+                    "value") %>%
+      tidyr::pivot_wider(names_from = "Industry Sector",
+                         values_from = "value") %>%
+      dplyr::mutate(fte = .data$`FTE Employment`/.data$`Total Employment`)
 
     fte_industry_ratio <- m %>%
-      dplyr::filter(`Industry Sector`  %in% c("FTE Employment")) %>%
+      dplyr::filter(.data$`Industry Sector`  %in% c("FTE Employment")) %>%
       tidyr::pivot_longer(cols = 2:20,
                           names_to = "industry",
                           values_to = "employment") %>%
-      dplyr::select(industry, employment) %>%
-      dplyr::mutate(national_ratio = employment / sum(employment)) %>%
-      dplyr::select(-employment)
+      dplyr::select("industry",
+                    "employment") %>%
+      dplyr::mutate(national_ratio = .data$employment / sum(.data$employment)) %>%
+      dplyr::select(-"employment")
 
 
 
     industry_productivity <- m %>%
-      tidyr::pivot_longer(cols = 2:length(.),
+      tidyr::pivot_longer(cols = -"Industry Sector",
                           names_to = "industry",
                           values_to = "flow") %>%
-      dplyr::filter(`Industry Sector` %in% c("Australian Production", "FTE Employment")) %>%
-      tidyr::pivot_wider(names_from = `Industry Sector`, values_from = flow) %>%
-      dplyr::filter(industry %in% anzsic_swap$name) %>%
-      dplyr::mutate(productivity = `Australian Production`/`FTE Employment`)
+      dplyr::filter(.data$`Industry Sector` %in% c("Australian Production", "FTE Employment")) %>%
+      tidyr::pivot_wider(names_from = "Industry Sector", values_from = "flow") %>%
+      dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
+      dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
 
     lqs <-  work[work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
-      dplyr::rename(lga = lga_pow) %>%
+      dplyr::rename(lga = "lga_pow") %>%
       adjust_employment() %>%
-      dplyr::select(industry, lga, employment = adjust_jobs) %>%
+      dplyr::select("industry",
+                    "lga",
+                    employment = "adjust_jobs") %>%
       dplyr::left_join(fte_ratios, by = "industry") %>%
-      dplyr::mutate(employment = employment * fte) %>%
-      dplyr::select(-c(`FTE Employment`, `Total Employment`, fte)) %>%
-      dplyr::group_by(lga) %>%
-      dplyr::mutate(region_ratio = ifelse(is.nan(employment/sum(employment)), 0, employment / sum(employment))) %>%
+      dplyr::mutate(employment = .data$employment * .data$fte) %>%
+      dplyr::select(-c("FTE Employment", "Total Employment", "fte")) %>%
+      dplyr::group_by(.data$lga) %>%
+      dplyr::mutate(region_ratio = ifelse(is.nan(.data$employment / sum(.data$employment)),
+                                          0,
+                                          .data$employment / sum(.data$employment))) %>%
       dplyr::ungroup() %>%
       dplyr::left_join(fte_industry_ratio, by = "industry") %>%
-      dplyr::mutate(lq = region_ratio / national_ratio,
-                    lq = ifelse(lq < 1, lq, 1))
+      dplyr::mutate(lq = .data$region_ratio /.data$ national_ratio,
+                    lq = ifelse(.data$lq < 1, .data$lq, 1))
 
 
 

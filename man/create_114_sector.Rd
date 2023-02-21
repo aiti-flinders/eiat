@@ -29,6 +29,8 @@ and Table 20 from a local folder. This can be useful if a different year input-o
 }
 \examples{
 create_114_sector()
-create_114_sector(path = "local_data")
+\dontrun{
+create_114_sector(path = "")
+}
 
 }

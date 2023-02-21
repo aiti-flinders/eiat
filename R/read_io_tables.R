@@ -6,11 +6,17 @@ read_industry_flow_table <- function(path = NULL) {
 
   } else if (is.null(path)) {
 
-  flow_table <- readabs::download_abs_data_cube(catalogue_string = "australian-national-accounts-input-output-tables",
-                                  cube = "520905500105.xlsx",
-                                  path = here::here("data-raw"))
+    # The path that the flow table is downloaded to must exist
 
-  raw <- suppressMessages(readxl::read_excel(flow_table, sheet = "Table 5", .name_repair = "minimal"))
+    if (!dir.exists(here::here("data-raw"))) {
+      dir.create(here::here("data-raw"))
+    }
+
+    flow_table <- readabs::download_abs_data_cube(catalogue_string = "australian-national-accounts-input-output-tables",
+                                                  cube = "520905500105.xlsx",
+                                                  path = here::here("data-raw"))
+
+    raw <- suppressMessages(readxl::read_excel(flow_table, sheet = "Table 5", .name_repair = "minimal"))
 
   }
 
@@ -23,7 +29,7 @@ read_industry_flow_table <- function(path = NULL) {
 
   industry_flow[1:length(industry_flow)] <- sapply(industry_flow[1:length(industry_flow)], as.numeric)
 
-  colnames(industry_flow) <- eiat::io_cols
+  colnames(industry_flow) <- io_cols
 
   industry_flow
 
@@ -36,10 +42,17 @@ read_national_employment_table <- function(path = NULL) {
 
   } else if (is.null(path)) {
 
-  employment_table <- readabs::download_abs_data_cube(catalogue_string = "australian-national-accounts-input-output-tables",
-                                                      cube = "520905500120.xlsx",
-                                                      path = here::here("data-raw"))
-  raw <- suppressMessages(readxl::read_excel(employment_table, sheet = "Table 20"))
+    # The path that the flow table is downloaded to must exist
+
+    if (!dir.exists(here::here("data-raw"))) {
+      dir.create(here::here("data-raw"))
+    }
+
+    employment_table <- readabs::download_abs_data_cube(catalogue_string = "australian-national-accounts-input-output-tables",
+                                                        cube = "520905500120.xlsx",
+                                                        path = here::here("data-raw"))
+
+    raw <- suppressMessages(readxl::read_excel(employment_table, sheet = "Table 20"))
 
   }
 
@@ -57,16 +70,16 @@ read_national_employment_table <- function(path = NULL) {
 
   df <- df[c("ioig", "industry_name", "Total Employment", "FTE Employment")]
 
-  dplyr::left_join(df, eiat::ioig_anzsic_div,  by = "ioig") %>%
-    dplyr::group_by(anzsic_division_code) %>%
-    dplyr::summarise(dplyr::across(c(`Total Employment`, `FTE Employment`), sum), .groups = "drop") %>%
-    tidyr::pivot_longer(cols = -anzsic_division_code,
-                 names_to = "from_anzsic") %>%
-    tidyr::pivot_wider(names_from = anzsic_division_code,
-                values_from = value) %>%
-    dplyr::arrange(factor(from_anzsic, levels = c("FTE Employment", "Total Employment"))) %>%
+  dplyr::left_join(df, ioig_anzsic_div,  by = "ioig") %>%
+    dplyr::group_by(.data$anzsic_division_code) %>%
+    dplyr::summarise(dplyr::across(c("Total Employment", "FTE Employment"), sum), .groups = "drop") %>%
+    tidyr::pivot_longer(cols = -"anzsic_division_code",
+                        names_to = "from_anzsic") %>%
+    tidyr::pivot_wider(names_from = "anzsic_division_code",
+                       values_from = "value") %>%
+    dplyr::arrange(factor(.data$from_anzsic, levels = c("FTE Employment", "Total Employment"))) %>%
     dplyr::mutate(`Total Industry Uses` = rowSums(dplyr::across(c(A:S))),
-           `Total Supply` = `Total Industry Uses`)
+                  `Total Supply` = .data$`Total Industry Uses`)
 }
 
 
