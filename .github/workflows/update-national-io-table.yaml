@@ -1,0 +1,44 @@
+# Check on Friday 2am/3am Adelaide/Australia time for updated ABS data
+
+name: update-abs
+
+# Controls when the action will run. Run this job every weekday at 12:40am UTC, which should be 11:10am Adelaide time
+on:
+   schedule:
+      - cron: '0 17 * * 5'
+
+   push:
+    branches:
+        [main, master, update-io-table]
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install depdendencies
+        run: |
+          Rscript -e "install.packages(c('remotes'))"
+          Rscript -e "devtools::install_github('aiti-flinders/eiat')"
+      - name: Update data
+        run: |
+          Rscript -e "library(eiat)"
+          Rscript -e "update_national_io_table()"
+      - name: Commit data
+        run: |
+          git config --global user.name 'Hamish Gamble'
+          git config --global user.email 'gamb0043@flinders.edu.au'
+          git add .
+          git commit -m 'Scheduled data updates' || echo "No changes to commit"
+          git push || echo "No changes to commit"
+

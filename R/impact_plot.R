@@ -5,7 +5,7 @@
 #' @param indicator One of "emp" for employment, "grp" for Gross Regional Product, or "output" for Output
 #' @param background_colour Background colour of the graph.
 #'
-#' @return
+#' @return ggplot2 object
 #' @export
 #'
 #' @examples
