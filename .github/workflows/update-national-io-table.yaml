@@ -16,8 +16,6 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -27,6 +25,8 @@ jobs:
           use-public-rspm: true
 
       - name: Install depdendencies
+        env:
+          GITHUB_PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           Rscript -e "install.packages(c('remotes'))"
           Rscript -e "remotes::install_github('aiti-flinders/eiat', ref = 'update-io-table')"
