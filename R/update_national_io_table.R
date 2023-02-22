@@ -1,12 +1,12 @@
-update_national_io_table <- function(force = FALSE) {
+update_national_io_table <- function() {
 
   check_updated <- create_19_sector(TRUE)
 
-  if (all(check_updated == eiat::national_19) & !force) {
+  if (all(check_updated == eiat::national_19)) {
 
     cli::cli_alert_success("Package data already up to date")
 
-  } else if (!all(check_updated == eiat::national_19) | force) {
+  } else  {
 
     cli::cli_alert_warning("Updating Regional Input-Output Tables")
 
@@ -27,11 +27,14 @@ update_national_io_table <- function(force = FALSE) {
 
 create_lq <- function(data, year, type) {
 
-  lq_models <- get_available_regions(year = {{year}}) %>%
+  regions <- get_available_regions(year = {{year}}) %>%
     dplyr::pull(.data$lga) %>%
-    purrr::set_names() %>%
-    purrr::map(~purrr::possibly(rtt_basic, otherwise = "error here")(data, .x, type))
+    purrr::set_names()
 
-  lq_models
+  lq_models <- purrr::map(.x = regions,
+                          .f = ~purrr::possibly(rtt_basic, otherwise = "error here")(data, .x, type),
+               .progress = TRUE)
+
+  return(lq_models)
 
 }

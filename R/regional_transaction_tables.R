@@ -91,9 +91,7 @@ rtt_basic <- function(data = get_data(2021), region, type = "household") {
   other_multiplier <- m["Australian Production",
                         c("General Government Final Consumption Expenditure", "Gross Fixed Capital Formation", "Changes in Inventories")] / m["FTE Employment", "Total Supply"]
 
-  other_multiplier <- other_multiplier*(region_fte_employment %>%
-                                          dplyr::summarise(sum(.data$employment)) %>%
-                                          dplyr::pull())
+  other_multiplier <- other_multiplier*(sum(region_fte_employment$employment))
 
   rtt_multiplier <- c(sector_prod, hh_multiplier, other_multiplier)
 
