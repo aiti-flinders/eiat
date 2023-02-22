@@ -1,13 +1,14 @@
-update_national_io_table <- function() {
+update_national_io_table <- function(force = FALSE) {
+
   check_updated <- create_19_sector(TRUE)
 
-  if (all(check_updated == national_19)) {
+  if (all(check_updated == eiat::national_19) & !force) {
 
     cli::cli_alert_success("Package data already up to date")
 
-  } else {
+  } else if (!all(check_updated == eiat::national_19) | force) {
 
-    cli::cli_alert_warning("Downloaded data is different to existing package data. Updating Regional Input-Output Tables")
+    cli::cli_alert_warning("Updating Regional Input-Output Tables")
 
     data <- get_data(year = 2021, data = check_updated)
 
@@ -19,6 +20,7 @@ update_national_io_table <- function() {
     usethis::use_data(lq_basic, compress = "gzip", overwrite = TRUE)
 
     cli::cli_alert_success("Package data updated")
+    return(TRUE)
 
   }
 }
