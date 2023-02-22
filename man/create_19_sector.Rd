@@ -4,7 +4,7 @@
 \alias{create_19_sector}
 \title{Create 19 Sector Input-Output Table.}
 \usage{
-create_19_sector(path = NULL)
+create_19_sector(check = FALSE)
 }
 \arguments{
 \item{path}{path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.

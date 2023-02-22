@@ -7,7 +7,7 @@
 https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release
 }
 \usage{
-create_114_sector(path = NULL)
+create_114_sector(update = FALSE)
 }
 \arguments{
 \item{path}{path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.

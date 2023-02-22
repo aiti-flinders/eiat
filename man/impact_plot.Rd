@@ -16,7 +16,7 @@ impact_plot(data, type, indicator, background_colour = "grey")
 \item{background_colour}{Background colour of the graph.}
 }
 \value{
-
+ggplot2 object
 }
 \description{
 Plot Impact Analyses

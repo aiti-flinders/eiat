@@ -35,7 +35,7 @@ jobs:
       - name: Update data
         run: |
           Rscript -e "library(eiat)"
-          Rscript -e "update_national_io_table()"
+          Rscript -e "eiat:::update_national_io_table()"
       - name: Commit data
         run: |
           git config --global user.name 'Hamish Gamble'

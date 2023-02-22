@@ -13,7 +13,7 @@ impact_analysis(region, impacts)
 The matrix must have rownames equal to the 19 industry sectors.}
 }
 \value{
-
+list
 }
 \description{
 Conduct an impact analysis assessment for a Local Government Area.
