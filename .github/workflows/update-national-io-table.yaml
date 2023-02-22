@@ -2,15 +2,10 @@
 
 name: update-national-io
 
-# Controls when the action will run. Run this job every weekday at 12:40am UTC, which should be 11:10am Adelaide time
+# Controls when the action will run.
 on:
    schedule:
       - cron: '0 17 * * 5'
-
-   push:
-    branches:
-        [main, master, update-io-table]
-
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
