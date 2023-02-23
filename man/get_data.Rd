@@ -8,6 +8,8 @@ get_data(year, data = NULL)
 }
 \arguments{
 \item{year}{Census year}
+
+\item{data}{NULL by defauilt which uses package data. Specify a data frame to override.}
 }
 \value{
 list

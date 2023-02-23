@@ -1,22 +1,17 @@
 #' Create 114 sector input-output table.
 #'
+#' @param update logical. FALSE (the default) to use package data, TRUE to re-download from the ABS
+#'
 #' @description Creates a 114 sector input-output table from the ABS National Accounts: Input-Output tables
 #' Industry by industry flow table (Table 5.) and Employment by industry table (Table 20.). The 114 sector version
 #' created is modified to enable easy creation of the 19 sector model used to create Regional Input-Ouput tables.
 #' The current version of the data is installed with the package as `industry_flows`. A path can be specified to instead read Table 5
 #' and Table 20 from a local folder. This can be useful if a different year input-output table is required.
 #'
-#' @param path path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-#' NULL by default which uses the `industry_flows` data installed with the package.
-#' \itemize{
-#' \item{Table 5. Industry by industry flow table}{}
-#' \item{Table 20. Employment by industry}{}
-#' }
-#'
 #' @examples
 #' create_114_sector()
 #' \dontrun{
-#' create_114_sector(path = "")
+#' create_114_sector(update = TRUE)
 #' }
 #'
 #' @source https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release
@@ -154,8 +149,8 @@ create_114_sector <- function(update = FALSE) {
 
 #' Create 19 Sector Input-Output Table.
 #'
-#' @param path path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-#' NULL by default which uses the `industry_flows` data installed with the package.
+#' @param update logical. FALSE (the default) to use package data, TRUE to re-download from the ABS
+#'
 #'
 #' @description
 #' Creates a 19 Sector Input-Output Table by aggregating the 114 Sector Input-Output Table (see: `create_114_sector()`)
@@ -165,9 +160,9 @@ create_114_sector <- function(update = FALSE) {
 #'
 #' @examples
 #' create_19_sector()
-create_19_sector <- function(check = FALSE) {
+create_19_sector <- function(update = FALSE) {
 
-  create_114 <-  create_114_sector(check)
+  create_114 <-  create_114_sector(update)
 
   industry_industry_114 <- create_114$flows
   employment <- create_114$employment

@@ -10,12 +10,7 @@ https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-
 create_114_sector(update = FALSE)
 }
 \arguments{
-\item{path}{path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-NULL by default which uses the \code{industry_flows} data installed with the package.
-\itemize{
-\item{Table 5. Industry by industry flow table}{}
-\item{Table 20. Employment by industry}{}
-}}
+\item{update}{logical. FALSE (the default) to use package data, TRUE to re-download from the ABS}
 }
 \value{
 Silently returns a list with the 114 sector input-output table ("flows"), and the path to Table 5 and Table 20.
@@ -30,7 +25,7 @@ and Table 20 from a local folder. This can be useful if a different year input-o
 \examples{
 create_114_sector()
 \dontrun{
-create_114_sector(path = "")
+create_114_sector(update = TRUE)
 }
 
 }

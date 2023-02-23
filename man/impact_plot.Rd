@@ -22,5 +22,10 @@ ggplot2 object
 Plot Impact Analyses
 }
 \examples{
+\dontrun{
+impact <- matrix(0, 19, 1, dimnames = list(anzsic_swap$name, 2023)))
+data <- impact_analysis("Adelaide", impact)
+impact_plot(data, "column", "emp")
+}
 
 }

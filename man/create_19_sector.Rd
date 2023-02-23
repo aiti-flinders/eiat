@@ -4,11 +4,10 @@
 \alias{create_19_sector}
 \title{Create 19 Sector Input-Output Table.}
 \usage{
-create_19_sector(check = FALSE)
+create_19_sector(update = FALSE)
 }
 \arguments{
-\item{path}{path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-NULL by default which uses the \code{industry_flows} data installed with the package.}
+\item{update}{logical. FALSE (the default) to use package data, TRUE to re-download from the ABS}
 }
 \value{
 tibble of the industry-industry flows between 19 ANZSIC Sectors for Australia.

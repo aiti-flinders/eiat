@@ -8,7 +8,11 @@
 #' @return ggplot2 object
 #' @export
 #'
-#' @examples
+#' @examples \dontrun{
+#' impact <- matrix(0, 19, 1, dimnames = list(anzsic_swap$name, 2023)))
+#' data <- impact_analysis("Adelaide", impact)
+#' impact_plot(data, "column", "emp")
+#' }
 #'
 impact_plot <- function(data, type, indicator, background_colour = "grey") {
 

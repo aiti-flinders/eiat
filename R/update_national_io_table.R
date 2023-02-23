@@ -5,6 +5,7 @@ update_national_io_table <- function() {
   if (all(check_updated == eiat::national_19)) {
 
     cli::cli_alert_success("Package data already up to date")
+    return(TRUE)
 
   } else  {
 

@@ -45,6 +45,7 @@
 #'
 #'
 #' @param year Census year
+#' @param data NULL by defauilt which uses package data. Specify a data frame to override.
 #'
 #' @return list
 #' @export
