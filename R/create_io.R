@@ -1,22 +1,17 @@
 #' Create 114 sector input-output table.
 #'
+#' @param update logical. FALSE (the default) to use package data, TRUE to re-download from the ABS
+#'
 #' @description Creates a 114 sector input-output table from the ABS National Accounts: Input-Output tables
 #' Industry by industry flow table (Table 5.) and Employment by industry table (Table 20.). The 114 sector version
 #' created is modified to enable easy creation of the 19 sector model used to create Regional Input-Ouput tables.
 #' The current version of the data is installed with the package as `industry_flows`. A path can be specified to instead read Table 5
 #' and Table 20 from a local folder. This can be useful if a different year input-output table is required.
 #'
-#' @param path path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-#' NULL by default which uses the `industry_flows` data installed with the package.
-#' \itemize{
-#' \item{Table 5. Industry by industry flow table}{}
-#' \item{Table 20. Employment by industry}{}
-#' }
-#'
 #' @examples
 #' create_114_sector()
 #' \dontrun{
-#' create_114_sector(path = "")
+#' create_114_sector(update = TRUE)
 #' }
 #'
 #' @source https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release
@@ -26,53 +21,35 @@
 #' @importFrom tidyselect where
 #' @importFrom rlang .data
 #'
-create_114_sector <- function(path = NULL) {
+create_114_sector <- function(update = FALSE) {
 
-  # Need a folder with table 5 (industry flows) and table 20 (employment by industry)
-  if (is.null(path)) {
+  # Method to check ABS website for a new version of Table 5 and Table 20
+
+  if (isFALSE(update)) {
+
+    # Use package data
 
     industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
-    path_to_table_5 <- NULL
-    path_to_table_20 <- NULL
 
-  } else if (dir.exists(path)) {
+  } else if (isTRUE(update)) {
 
-    # Check for table 5. Assume that the file is always called "520905500105", either .xls or .xlsx
+    cli::cli_li("Downloading {.field Table 5. Industry by industry flow table (direct allocation of imports)} from
+                {.url https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release}")
 
-    path_to_table_5 <- c(paste0(path, "/", "520905500105.xls"), paste0(path, "/", "520905500105.xlsx"))
-    path_to_table_5 <- path_to_table_5[which(file.exists(path_to_table_5))]
+    industry_flows <- read_industry_flow_table()
 
-    path_to_table_20 <- c(paste0(path, "/", "520905500120.xls"), paste0(path, "/", "520905500120.xlsx"))
-    path_to_table_20 <- path_to_table_20[which(file.exists(path_to_table_20))]
+    cli::cli_alert_success("Downloaded indrusty flows data")
 
-    if (any(file.exists(path_to_table_5))) {
-
-      industry_flows <- read_industry_flow_table(path = path_to_table_5)
-      industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
+    industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
 
 
-      message(glue::glue("Reading {path_to_table_5[which(file.exists(path_to_table_5))]}"))
-    } else {
-
-      stop("Could not find `520905500105.xls/x` in `path`")
-
-    }
-
-    if (any(file.exists(path_to_table_20))) {
-
-      national_employment <- read_national_employment_table(path = path_to_table_20)
-
-      message(glue::glue("Reading {path_to_table_20[which(file.exists(path_to_table_20))]}"))
-    } else {
-
-      stop("Could not find `520905500120.xls/x` in `path`")
-
-    }
-
-  } else if (!is.null(path) & !dir.exists(path)) {
-
-    stop("`path` must specify an existing folder containing the ABS National Accounts tables 5 and 20")
+    cli::cli_li("Downloading {.field Table 20. Employment by industry} from
+                {.url https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/latest-release}")
+    national_employment <- read_national_employment_table()
+    cli::cli_alert_success("Downloaded national employment data")
   }
+
+
 
 
   industry_industry <- industry_flows %>%
@@ -164,16 +141,16 @@ create_114_sector <- function(path = NULL) {
                                           .data$`Total Supply`))
 
   out <- list("flows" = industry_industry_114,
-              "io_path" = path_to_table_5,
-              "industry_employment_path" = path_to_table_20)
+              "employment" = national_employment)
+
 
 
 }
 
 #' Create 19 Sector Input-Output Table.
 #'
-#' @param path path to a folder containing two spreadsheets downloaded from the Australian Bureau of Statistics.
-#' NULL by default which uses the `industry_flows` data installed with the package.
+#' @param update logical. FALSE (the default) to use package data, TRUE to re-download from the ABS
+#'
 #'
 #' @description
 #' Creates a 19 Sector Input-Output Table by aggregating the 114 Sector Input-Output Table (see: `create_114_sector()`)
@@ -183,16 +160,12 @@ create_114_sector <- function(path = NULL) {
 #'
 #' @examples
 #' create_19_sector()
-create_19_sector <- function(path = NULL) {
+create_19_sector <- function(update = FALSE) {
 
-  create_114 <-  create_114_sector(path)
+  create_114 <-  create_114_sector(update)
 
   industry_industry_114 <- create_114$flows
-  path_to_table_20 <- create_114$industry_employment_path
-
-  if (is.null(path_to_table_20)) {
-    employment <- national_employment
-  } else {employment <- read_national_employment_table(path = path_to_table_20)}
+  employment <- create_114$employment
 
   q1_19 <- industry_industry_114 %>%
     tidyr::pivot_longer(cols = -"row_name",

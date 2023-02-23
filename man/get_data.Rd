@@ -4,13 +4,15 @@
 \alias{get_data}
 \title{Generate Data For Regional Input-Output Table Creation}
 \usage{
-get_data(year)
+get_data(year, data = NULL)
 }
 \arguments{
 \item{year}{Census year}
+
+\item{data}{NULL by defauilt which uses package data. Specify a data frame to override.}
 }
 \value{
-
+list
 }
 \description{
 \code{get_data} creates a list of data frames containing all the data necessary to build a Regional Input-Output

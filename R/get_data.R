@@ -45,68 +45,72 @@
 #'
 #'
 #' @param year Census year
+#' @param data NULL by defauilt which uses package data. Specify a data frame to override.
 #'
-#' @return
+#' @return list
 #' @export
 #' @import mathjaxr
 #'
 #' @examples
 #' get_data(2021)
-get_data <- function(year) {
+get_data <- function(year, data = NULL) {
 
-
+  if (is.null(data)) {
     m <- create_19_sector()
+  } else {
+    m <- data
+  }
 
-    fte_ratios <- m %>%
+  fte_ratios <- m %>%
     dplyr::filter(.data$`Industry Sector` %in% c("FTE Employment", "Total Employment")) %>%
-      tidyr::pivot_longer(cols = 2:20,
-                          names_to = "industry",
-                          values_to = "value") %>%
-      dplyr::select("industry",
-                    "Industry Sector",
-                    "value") %>%
-      tidyr::pivot_wider(names_from = "Industry Sector",
-                         values_from = "value") %>%
-      dplyr::mutate(fte = .data$`FTE Employment`/.data$`Total Employment`)
+    tidyr::pivot_longer(cols = 2:20,
+                        names_to = "industry",
+                        values_to = "value") %>%
+    dplyr::select("industry",
+                  "Industry Sector",
+                  "value") %>%
+    tidyr::pivot_wider(names_from = "Industry Sector",
+                       values_from = "value") %>%
+    dplyr::mutate(fte = .data$`FTE Employment`/.data$`Total Employment`)
 
-    fte_industry_ratio <- m %>%
-      dplyr::filter(.data$`Industry Sector`  %in% c("FTE Employment")) %>%
-      tidyr::pivot_longer(cols = 2:20,
-                          names_to = "industry",
-                          values_to = "employment") %>%
-      dplyr::select("industry",
-                    "employment") %>%
-      dplyr::mutate(national_ratio = .data$employment / sum(.data$employment)) %>%
-      dplyr::select(-"employment")
+  fte_industry_ratio <- m %>%
+    dplyr::filter(.data$`Industry Sector`  %in% c("FTE Employment")) %>%
+    tidyr::pivot_longer(cols = 2:20,
+                        names_to = "industry",
+                        values_to = "employment") %>%
+    dplyr::select("industry",
+                  "employment") %>%
+    dplyr::mutate(national_ratio = .data$employment / sum(.data$employment)) %>%
+    dplyr::select(-"employment")
 
 
 
-    industry_productivity <- m %>%
-      tidyr::pivot_longer(cols = -"Industry Sector",
-                          names_to = "industry",
-                          values_to = "flow") %>%
-      dplyr::filter(.data$`Industry Sector` %in% c("Australian Production", "FTE Employment")) %>%
-      tidyr::pivot_wider(names_from = "Industry Sector", values_from = "flow") %>%
-      dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
-      dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
+  industry_productivity <- m %>%
+    tidyr::pivot_longer(cols = -"Industry Sector",
+                        names_to = "industry",
+                        values_to = "flow") %>%
+    dplyr::filter(.data$`Industry Sector` %in% c("Australian Production", "FTE Employment")) %>%
+    tidyr::pivot_wider(names_from = "Industry Sector", values_from = "flow") %>%
+    dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
+    dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
 
-    lqs <-  work[work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
-      dplyr::rename(lga = "lga_pow") %>%
-      adjust_employment() %>%
-      dplyr::select("industry",
-                    "lga",
-                    employment = "adjust_jobs") %>%
-      dplyr::left_join(fte_ratios, by = "industry") %>%
-      dplyr::mutate(employment = .data$employment * .data$fte) %>%
-      dplyr::select(-c("FTE Employment", "Total Employment", "fte")) %>%
-      dplyr::group_by(.data$lga) %>%
-      dplyr::mutate(region_ratio = ifelse(is.nan(.data$employment / sum(.data$employment)),
-                                          0,
-                                          .data$employment / sum(.data$employment))) %>%
-      dplyr::ungroup() %>%
-      dplyr::left_join(fte_industry_ratio, by = "industry") %>%
-      dplyr::mutate(lq = .data$region_ratio /.data$ national_ratio,
-                    lq = ifelse(.data$lq < 1, .data$lq, 1))
+  lqs <-  work[work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
+    dplyr::rename(lga = "lga_pow") %>%
+    adjust_employment() %>%
+    dplyr::select("industry",
+                  "lga",
+                  employment = "adjust_jobs") %>%
+    dplyr::left_join(fte_ratios, by = "industry") %>%
+    dplyr::mutate(employment = .data$employment * .data$fte) %>%
+    dplyr::select(-c("FTE Employment", "Total Employment", "fte")) %>%
+    dplyr::group_by(.data$lga) %>%
+    dplyr::mutate(region_ratio = ifelse(is.nan(.data$employment / sum(.data$employment)),
+                                        0,
+                                        .data$employment / sum(.data$employment))) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(fte_industry_ratio, by = "industry") %>%
+    dplyr::mutate(lq = .data$region_ratio /.data$ national_ratio,
+                  lq = ifelse(.data$lq < 1, .data$lq, 1))
 
 
 

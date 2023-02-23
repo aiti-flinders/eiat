@@ -1,5 +1,6 @@
 ## code to prepare `internal_data` dataset goes here
 library(eiat)
+library(purrr)
 library(dplyr)
 library(tidyr)
 library(stringr)
@@ -11,11 +12,11 @@ library(strayr)
 
 # Industry Flows ----------------------------------------------------------
 
-industry_flows <- read_industry_flow_table()
+industry_flows <- eiat:::read_industry_flow_table()
 
 # National Employment -----------------------------------------------------
 
-national_employment <- read_national_employment_table()
+national_employment <- eiat:::read_national_employment_table()
 
 # Input Output Industry Group to ANZSIC -----------------------------------
 

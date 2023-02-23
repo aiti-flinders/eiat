@@ -16,11 +16,16 @@ impact_plot(data, type, indicator, background_colour = "grey")
 \item{background_colour}{Background colour of the graph.}
 }
 \value{
-
+ggplot2 object
 }
 \description{
 Plot Impact Analyses
 }
 \examples{
+\dontrun{
+impact <- matrix(0, 19, 1, dimnames = list(anzsic_swap$name, 2023)))
+data <- impact_analysis("Adelaide", impact)
+impact_plot(data, "column", "emp")
+}
 
 }

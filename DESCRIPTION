@@ -18,16 +18,18 @@ Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 RdMacros: mathjaxr
 Imports: 
     aititheme (>= 0.0.0.9000),
+    cli,
     dplyr,
     ggplot2,
     glue,
     here,
     magrittr,
     mathjaxr,
+    purrr,
     readabs,
     readxl,
     rlang,
@@ -35,12 +37,13 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    usethis
 Depends: 
     R (>= 2.10)
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://aiti-flinders.github.io/eiat/
-Remotes:  
+Remotes: 
     aiti-flinders/aititheme

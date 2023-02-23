@@ -6,7 +6,7 @@
 #' @param impacts A matrix with 19 rows and at least 1 column containing expenditure impacts for each of the 19 sectors.
 #' The matrix must have rownames equal to the 19 industry sectors.
 #'
-#' @return
+#' @return list
 #' @export
 #'
 #' @examples

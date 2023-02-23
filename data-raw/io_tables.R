@@ -1,4 +1,4 @@
-## code to prepare `io_tables` dataset goes here
+## code to prepare `national_19` dataset goes here
 library(eiat)
 national_19 <- create_19_sector()
 
