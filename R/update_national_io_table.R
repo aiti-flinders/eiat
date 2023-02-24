@@ -26,9 +26,9 @@ update_national_io_table <- function() {
   }
 }
 
-create_lq <- function(data, year, type) {
+create_lq <- function(data,  type) {
 
-  regions <- get_available_regions(year = {{year}}) %>%
+  regions <- get_available_regions() %>%
     dplyr::pull(.data$lga) %>%
     purrr::set_names()
 

@@ -40,17 +40,6 @@ ioig_anzsic_div <- left_join(ioig_anzsic, anzsic2006 %>% mutate(anzsic_class_cod
   distinct(ioig, anzsic_division_code)
 
 
-# Shape Files -------------------------------------------------------------
-
-
-make_boundaries <- function(year) {
-  read_absmap(paste0("lga", year), remove_year_suffix = TRUE) %>%
-    st_drop_geometry() %>%
-    mutate(year = {{year}})
-}
-
-lga_boundaries <- map_dfr(.x = c(2011, 2016, 2021),
-                          .f = ~make_boundaries(.x))
 
 
 # ANZSIC Letters to Numbers -----------------------------------------------

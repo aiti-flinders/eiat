@@ -57,13 +57,10 @@ fte_employment <- function(regional_employment, national_ratios) {
                      "fte"))
 }
 
-get_available_regions <- function(year) {
+get_available_regions <- function() {
 
-  work %>%
-    dplyr::filter(year == {{year}}) %>%
-    dplyr::distinct(.data$lga_pow) %>%
-    dplyr::rename(lga = "lga_pow") %>%
-    dplyr::left_join(lga_boundaries[lga_boundaries$year == {{year}},], by = c("lga" = "lga_name"))
+  regions
+
 }
 
 get_regional_sector_productivity <- function(data, region) {
