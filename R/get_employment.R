@@ -30,7 +30,7 @@ get_local_employment <- function(region, year, adjust = TRUE) {
     stop("The `year` argument to `get_local_employment()` must be an ABS Census year (2011, 2016 or 2021).")
   }
 
-  if (!region %in% get_available_regions({{year}})$lga) {
+  if (!region %in% get_available_regions()$lga) {
     stop(glue::glue("Unable to find the region: {region} for {year}. Local Government Area names change between
                     Census years. Try `get_available_regions({year})`"))
   }
@@ -84,7 +84,7 @@ get_regional_employment <- function(region, year, adjust = TRUE) {
     stop("The `year` argument to `get_regional_employment()` must be an ABS Census year (2011, 2016 or 2021).")
   }
 
-  if (!region %in% get_available_regions({{year}})$lga) {
+  if (!region %in% get_available_regions()$lga) {
     stop(glue::glue(
     "Unable to find the region: {region} for {year}.
     Local Government Area names change between Census years.
