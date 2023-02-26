@@ -35,6 +35,10 @@
 #'
 "national_19"
 
+#' LGA 2022 State Names
+#'
+"regions"
+
 #' Regional Input Output Tables (Household Split)
 #'
 #' Regional Input-Output tables derived using the location quotient method from the Australian 19 Sector Input-Output table.

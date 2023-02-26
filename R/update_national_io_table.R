@@ -13,8 +13,8 @@ update_national_io_table <- function() {
 
     data <- get_data(year = 2021, data = check_updated)
 
-    lq_models <- create_lq(data, 2021, "household")
-    lq_basic <- create_lq(data, 2021, "basic")
+    lq_models <- create_lq(data, "household")
+    lq_basic <- create_lq(data, "basic")
 
 
     usethis::use_data(lq_models, compress = "gzip", overwrite = TRUE)
