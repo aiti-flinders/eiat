@@ -8,7 +8,7 @@ read_regions <- function(year) {
 
   read_excel(path) %>%
     distinct(LGA_NAME_2022, STATE_NAME_2021) %>%
-    filter(!grepl("Migratory|No usual address|Unincorp|Other Australia", LGA_NAME_2022)) %>%
+    filter(!grepl("Migratory|No usual address|Unincorp|Outside Australia", LGA_NAME_2022)) %>%
     rename(lga = LGA_NAME_2022,
            state = STATE_NAME_2021) %>%
     mutate(year = {{year}})

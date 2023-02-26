@@ -5,7 +5,7 @@
 \alias{regions}
 \title{LGA 2022 State Names}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 542 rows and 3 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 541 rows and 3 columns.
 }
 \usage{
 regions
