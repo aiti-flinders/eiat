@@ -4,6 +4,8 @@ name: update-national-io
 
 # Controls when the action will run.
 on:
+  push:
+    [main, master]
    schedule:
       - cron: '0 17 * * 5'
 
@@ -24,7 +26,7 @@ jobs:
       - name: Install packages and update
         run: |
           Rscript -e "install.packages(c('remotes'))"
-          Rscript -e "remotes::install_github('aiti-flinders/eiat', ref = 'update-io-table')"
+          Rscript -e "remotes::install_github('aiti-flinders/eiat')"
           Rscript -e "library(eiat)"
           Rscript -e "eiat:::update_national_io_table()"
       - name: Commit data
