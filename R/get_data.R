@@ -94,7 +94,7 @@ get_data <- function(year, data = NULL) {
     dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
     dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
 
-  lqs <-  work[work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
+  lqs <-  eiat::work[eiat::work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
     dplyr::rename(lga = "lga_pow") %>%
     adjust_employment() %>%
     dplyr::select("industry",
