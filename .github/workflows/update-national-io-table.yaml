@@ -29,11 +29,12 @@ jobs:
           Rscript -e "remotes::install_github('aiti-flinders/eiat')"
           Rscript -e "library(eiat)"
           Rscript -e "eiat:::update_national_io_table()"
-      - name: Commit data
-        run: |
-          git config --global user.name 'Hamish Gamble'
-          git config --global user.email 'gamb0043@flinders.edu.au'
-          git add .
-          git commit -m 'Scheduled data updates' || echo "No changes to commit"
-          git push || echo "No changes to commit"
+      - name: Commit data (PR)
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Scheduled data update
+          committer: Hamish Gamble <hamish.gamble@flinders.edu.au>
+          title: 'Scheduled data update'
+          labels: automated pr
+          branch: data-updates
 
