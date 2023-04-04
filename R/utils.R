@@ -59,7 +59,7 @@ fte_employment <- function(regional_employment, national_ratios) {
 
 get_available_regions <- function() {
 
-  regions
+  eiat::regions
 
 }
 
