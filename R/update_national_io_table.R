@@ -45,6 +45,10 @@ create_lq <- function(data,  type) {
     dplyr::pull(.data$lga) %>%
     purrr::set_names()
 
+  write.csv(regions, "regions.csv")
+
+  lapply(names(data), function(x) {write.csv(data[[x]], file = paste0(x, ".csv"), row.names = FALSE)})
+
   lq_models <- purrr::map(.x = regions,
                           .f = ~purrr::possibly(rtt_basic, otherwise = "error here")(data, .x, type),
                .progress = TRUE)
