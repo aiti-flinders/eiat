@@ -36,7 +36,7 @@ get_local_employment <- function(region, year, adjust = TRUE) {
   }
 
 
-  employment <- live_and_work %>%
+  employment <- eiat::live_and_work %>%
     dplyr::filter(dplyr::if_all(c("lga_pow", "lga_ur"), ~ .x == region),
                   .data$year == {{year}}) %>%
     dplyr::mutate(lga = region, .before = 1) %>%
@@ -93,7 +93,7 @@ get_regional_employment <- function(region, year, adjust = TRUE) {
   }
 
 
-  employment <- work %>%
+  employment <- eiat::work %>%
     dplyr::filter(.data$lga_pow == region,
                   .data$year == {{year}}) %>%
     dplyr::rename(lga = "lga_pow")
