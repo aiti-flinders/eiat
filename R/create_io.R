@@ -38,7 +38,7 @@ create_114_sector <- function(update = FALSE) {
 
     industry_flows <- read_industry_flow_table()
 
-    cli::cli_alert_success("Downloaded indrusty flows data")
+    cli::cli_alert_success("Downloaded industry flows data")
 
     industry_flows <- industry_flows[stats::complete.cases(industry_flows), ]
 

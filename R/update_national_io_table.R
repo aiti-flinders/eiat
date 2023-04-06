@@ -1,3 +1,8 @@
+#' Update National Input Output Table
+#'
+#' @return TRUE
+#' @export
+#'
 update_national_io_table <- function() {
 
   check_updated <- create_19_sector(TRUE)
@@ -26,6 +31,14 @@ update_national_io_table <- function() {
   }
 }
 
+#' Create Location Quotient model input output tables
+#'
+#' @param data data.frame from get_data()
+#' @param type character.
+#'
+#' @return a list of matrices
+#' @export
+#'
 create_lq <- function(data,  type) {
 
   regions <- get_available_regions() %>%
