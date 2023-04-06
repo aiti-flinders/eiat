@@ -48,8 +48,16 @@ create_lq <- function(data,  type) {
 
   lq_models <- purrr::map(.x = regions,
                           .f = ~purrr::safely(rtt_basic)(data, .x, type),
-               .progress = TRUE)
+                          .progress = TRUE) %>%
+    purrr::transpose()
 
-  return(lq_models)
+  if (any(!is.null(unlist(lq_models[["error"]])))) {
+
+    return(lq_models)
+
+  } else {
+
+    lq_models <- lq_models[["result"]]
+  }
 
 }
