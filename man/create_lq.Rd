@@ -10,6 +10,8 @@ create_lq(data, type, progress)
 \item{data}{data.frame from get_data()}
 
 \item{type}{character.}
+
+\item{progress}{logical. TRUE to show a progress bar}
 }
 \value{
 a list of matrices

@@ -1,5 +1,7 @@
 #' Update National Input Output Table
 #'
+#' @param progress logical. TRUE to show a progress bar
+#'
 #' @return TRUE
 #' @export
 #'
@@ -35,6 +37,7 @@ update_national_io_table <- function(progress = TRUE) {
 #'
 #' @param data data.frame from get_data()
 #' @param type character.
+#' @param progress logical. TRUE to show a progress bar
 #'
 #' @return a list of matrices
 #' @export

@@ -6,6 +6,9 @@
 \usage{
 update_national_io_table(progress = TRUE)
 }
+\arguments{
+\item{progress}{logical. TRUE to show a progress bar}
+}
 \value{
 TRUE
 }
