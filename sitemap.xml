@@ -19,6 +19,9 @@
     <loc>https://aiti-flinders.github.io/eiat/reference/create_19_sector.html</loc>
   </url>
   <url>
+    <loc>https://aiti-flinders.github.io/eiat/reference/create_lq.html</loc>
+  </url>
+  <url>
     <loc>https://aiti-flinders.github.io/eiat/reference/get_data.html</loc>
   </url>
   <url>
@@ -53,6 +56,9 @@
   </url>
   <url>
     <loc>https://aiti-flinders.github.io/eiat/reference/rtt_basic.html</loc>
+  </url>
+  <url>
+    <loc>https://aiti-flinders.github.io/eiat/reference/update_national_io_table.html</loc>
   </url>
   <url>
     <loc>https://aiti-flinders.github.io/eiat/reference/work.html</loc>
