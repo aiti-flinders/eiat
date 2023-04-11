@@ -1,9 +1,11 @@
 #' Update National Input Output Table
 #'
+#' @param progress logical. TRUE to show a progress bar
+#'
 #' @return TRUE
 #' @export
 #'
-update_national_io_table <- function() {
+update_national_io_table <- function(progress = TRUE) {
 
   check_updated <- create_19_sector(TRUE)
 
@@ -18,8 +20,8 @@ update_national_io_table <- function() {
 
     data <- get_data(year = 2021, data = check_updated)
 
-    lq_models <- create_lq(data, "household")
-    lq_basic <- create_lq(data, "basic")
+    lq_models <- create_lq(data, "household", progress)
+    lq_basic <- create_lq(data, "basic", progress)
 
 
     usethis::use_data(lq_models, compress = "gzip", overwrite = TRUE)
@@ -35,11 +37,12 @@ update_national_io_table <- function() {
 #'
 #' @param data data.frame from get_data()
 #' @param type character.
+#' @param progress logical. TRUE to show a progress bar
 #'
 #' @return a list of matrices
 #' @export
 #'
-create_lq <- function(data,  type) {
+create_lq <- function(data,  type, progress) {
 
   regions <- get_available_regions() %>%
     dplyr::pull(.data$lga) %>%
@@ -48,8 +51,18 @@ create_lq <- function(data,  type) {
 
   lq_models <- purrr::map(.x = regions,
                           .f = ~purrr::safely(rtt_basic)(data, .x, type),
-               .progress = TRUE)
+                          .progress = progress)
 
-  return(lq_models)
+  lq_models <- purrr::transpose(lq_models)
+
+  if (any(!is.null(unlist(lq_models[["error"]])))) {
+
+    return(lq_models)
+
+  } else {
+
+    lq_models <- lq_models[["result"]]
+    return(lq_models)
+  }
 
 }
