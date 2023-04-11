@@ -23,7 +23,9 @@ update_national_io_table <- function(progress = TRUE) {
     lq_models <- create_lq(data, "household", progress)
     lq_basic <- create_lq(data, "basic", progress)
 
+    national_19 <- create_19_sector(TRUE)
 
+    usethis::use_data(national_19, compress = "xz", overwrite = TRUE)
     usethis::use_data(lq_models, compress = "gzip", overwrite = TRUE)
     usethis::use_data(lq_basic, compress = "gzip", overwrite = TRUE)
 
