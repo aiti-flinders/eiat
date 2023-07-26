@@ -70,6 +70,17 @@ read_national_employment_table <- function(path = NULL) {
 
   df <- df[c("ioig", "industry_name", "Total Employment", "FTE Employment")]
 
+  #Sometimes, for fun, the ABS like to change from # of people, to 1000's of people, without documentation.
+
+  is_1000 <- any(grepl("'000", raw$`Employed Persons (a)`))
+
+  if (isTRUE(is_1000)) {
+    df <- df %>%
+      dplyr::mutate(dplyr::across(c("Total Employment", "FTE Employment"), ~.x * 1000))
+  } else {
+    df <- df
+  }
+
   dplyr::left_join(df, ioig_anzsic_div,  by = "ioig") %>%
     dplyr::group_by(.data$anzsic_division_code) %>%
     dplyr::summarise(dplyr::across(c("Total Employment", "FTE Employment"), sum), .groups = "drop") %>%
