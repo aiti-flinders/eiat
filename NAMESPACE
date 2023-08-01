@@ -3,6 +3,7 @@
 export(create_114_sector)
 export(create_19_sector)
 export(create_lq)
+export(eiat)
 export(get_data)
 export(get_local_employment)
 export(get_regional_employment)
