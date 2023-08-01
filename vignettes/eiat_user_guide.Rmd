@@ -1,6 +1,10 @@
 ---
 title: "EIAT User Guide"
-output: pdf_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{EIAT User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 editor: visual
 ---
 
@@ -35,7 +39,7 @@ When this data has been collected, the EIAT can be accessed [here](https://aiti.
 
 ### Setting project parameters
 
-![](images/project-parameters.png)
+![](project-parameters.png)
 
 The project parameters can be adjusted by selecting **Project Setup** from the navigation bar at the top of the page. First select the State, and then the Local Government Area of interest.
 
@@ -43,11 +47,11 @@ The project parameters can be adjusted by selecting **Project Setup** from the n
 
 There are two options to enter data into the tool. For relatively simple analyses the user can first select the number of years into the future over which the investment will continue. It is by default set to 1, and the first year is the current year.
 
-![](images/entering-data.png)
+![](entering-data.png)
 
 Next, enter the direct capital expenditure for each industry sector into the table. Remember that these expenditures must be in basic (sometimes called producer) prices - that is, they should exclude margins, taxes, and subsidies - and must only be for expenditure which will occur (or is expected to occur) within the region.
 
-![](images/data-input.png)
+![](data-input.png)
 
 If you have a more complex analysis or want to keep a record of the estimated expenditures, a template can be downloaded, based on the parameters set out above, which can be opened in Microsoft Excel, OpenOffice, or Google Sheets. The file can be renamed, but only .csv files will be accepted by the tool. Once the data has been entered into the template, it can be uploaded using the 'Uploaded Data' button.
 
@@ -57,11 +61,11 @@ If you have a more complex analysis or want to keep a record of the estimated ex
 
 Once the direct capital expenditure data have been entered, a summary of the input data can be obtained by selecting the **Input Summary** tab from the navigation panel. Summary tables display the total direct capital expenditure in the region by year, and by industry and year. These tables can be downloaded, copied to clipboard, or printed, by clicking the relevant button.
 
-![](images/trable-buttons.png)
+![](trable-buttons.png)
 
 Summary graphs visualise the input data by year, and by industry and year. These graphs can also be downloaded as .png, .jpeg, and .pdf using the controls shown below the graph.
 
-![](images/download-graphs.png)
+![](download-graphs.png)
 
 The estimated economic impacts in terms of employment, and GRP can be seen by selecting the Economic Impacts tab from the navigation panel. For both employment impacts, and GRP impacts, annual and total tables and graphs can be viewed.
 
