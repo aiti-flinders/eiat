@@ -1,8 +1,9 @@
 pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
-articles: {}
-last_built: 2023-07-26T06:54Z
+articles:
+  eiat_user_guide: eiat_user_guide.html
+last_built: 2023-08-01T06:17Z
 urls:
   reference: https://aiti-flinders.github.io/eiat/reference
   article: https://aiti-flinders.github.io/eiat/articles

@@ -7,6 +7,12 @@
     <loc>https://aiti-flinders.github.io/eiat/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://aiti-flinders.github.io/eiat/articles/eiat_user_guide.html</loc>
+  </url>
+  <url>
+    <loc>https://aiti-flinders.github.io/eiat/articles/index.html</loc>
+  </url>
+  <url>
     <loc>https://aiti-flinders.github.io/eiat/authors.html</loc>
   </url>
   <url>
@@ -20,6 +26,9 @@
   </url>
   <url>
     <loc>https://aiti-flinders.github.io/eiat/reference/create_lq.html</loc>
+  </url>
+  <url>
+    <loc>https://aiti-flinders.github.io/eiat/reference/eiat.html</loc>
   </url>
   <url>
     <loc>https://aiti-flinders.github.io/eiat/reference/get_data.html</loc>
