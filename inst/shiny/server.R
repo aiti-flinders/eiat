@@ -244,10 +244,10 @@ function(input, output, session) {
         tempReport <- file.path(tempdir(), c("report.Rmd", "report-doc.Rmd", "preamble-latex.tex"))
 
         if (input$report_format == ".pdf") {
-          file.copy("report.Rmd", tempReport[1], overwrite = TRUE)
-          file.copy("preamble-latex.tex", tempReport[2], overwrite = TRUE)
+          file.copy(system.file("shiny/report.Rmd", package = "eiat"), tempReport[1], overwrite = TRUE)
+          #file.copy("preamble-latex.tex", tempReport[2], overwrite = TRUE)
         } else {
-          file.copy("report-doc.Rmd", tempReport[1], overwrite = TRUE)
+          file.copy(system.file("shiny/report-doc.Rmd", package = "eiat"), tempReport[1], overwrite = TRUE)
 
         }
 
