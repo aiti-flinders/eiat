@@ -34,6 +34,7 @@ Imports:
     readxl,
     rlang,
     scales,
+    shiny,
     stringr,
     tibble,
     tidyr,
@@ -42,8 +43,11 @@ Imports:
 Depends: 
     R (>= 2.10)
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://aiti-flinders.github.io/eiat/
 Remotes: 
     aiti-flinders/aititheme
+VignetteBuilder: knitr

@@ -1,0 +1,11 @@
+name: shiny
+title:
+username:
+account: aiti
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9536995
+bundleId: 7517369
+url: https://aiti.shinyapps.io/shiny/
+when: 1690865394.65048
+lastSyncTime: 1690865394.65051
