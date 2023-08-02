@@ -1,4 +1,42 @@
 url: https://aiti-flinders.github.io/eiat/
 template:
   bootstrap: 5
+reference:
+- title: "Employment"
+  desc: >
+    Functions to return local and regional employment for Local Government Areas (LGA).
+    Local employment refers to those who live and work within an LGA whereas regional
+    employment refers to those who work within an LGA.
+  contents:
+  - get_local_employment
+  - get_regional_employment
+- title: "Create Regional Input-Output Tables"
+  desc: >
+    Functions for creating  Input-Output Tables
+  contents:
+  - update_national_io_table
+  - create_114_sector
+  - create_19_sector
+  - create_lq
+  - get_data
+  - rtt_basic
+- title: "Economic Impacts"
+  desc: >
+    Functions for calculating economic impacts
+  contents:
+  - impact_analysis
+  - impact_plot
+- title: "Economic Impact Assessment Tool"
+  contents:
+  - eiat
+- title: "Included data"
+  desc: >
+    Data included with the package
+  contents:
+  - work
+  - live_and_work
+  - regions
+  - national_19
+  - lq_models
+  - lq_basic
 
