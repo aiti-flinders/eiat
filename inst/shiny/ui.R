@@ -177,7 +177,7 @@ navbarPage("Economic Impact Assessment Tool",
                                  all defined regions and industry sectors according to their employment proportions.",
                                  tags$b("Local Employment"), "refers to those who live and work in the region.",
                                  tags$b("Total Employment"), "refers to those who work in the region."),
-                               downloadUI("download_regional_employment", "Download Regional Employment"),
+                               downloadButton("download_regional_employment", "Download Regional Employment"),
                                div(DT::dataTableOutput("regional_employment"), style = 'font-size: 75%; width: 100%')),
                       tabPanel("Regional I-O (19 Sectors) Table",
                                p("The construction of the Regional Input-Output tables were adapted to allow for the fact
@@ -185,7 +185,7 @@ navbarPage("Economic Impact Assessment Tool",
                                  Therefore, two rows (for wages and salaries, and employment) were considered for the labour input.
                                  Labour used by the sector that work and live in the region and labour used by the sector that work in the
                                  region but resides outside the region."),
-                               downloadUI("download_regional_io", "Download Regional I-O Table."),
+                               downloadButton("download_regional_io", "Download Regional I-O Table."),
                                div(DT::dataTableOutput("regional_io"), style = 'font-size: 75%; width: 100%')
                       )
            ),
