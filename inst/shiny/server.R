@@ -117,10 +117,27 @@ function(input, output, session) {
     }
   )
 
-  # Objects
+  # Regional Employment
+  output$download_regional_employment <- downloadHandler(
+    filename = function() {
+      paste(input$lga, "Employment.csv")
+    },
+    content = function(file) {
+      vroom::vroom_write(regional_employment(), file, delim = ",")
+    }
+  )
+
+  # Regional I-O Table
+  output$download_regional_io <- downloadHandler(
+    filename = function() {
+      paste(input$lga, "I-O (19 Sector) Table.csv")
+    },
+    content = function(file) {
+      vroom::vroom_write(as_tibble(lq_models[[input$lga]], rownames = "Sector"), file, delim = ",")
+    }
+  )
+
   downloadServer("download_national_io", "National I-O (19 Sector) Table.csv", national_19)
-  downloadServer("download_regional_io", "Regional I-O (19 Sector) Table.csv", as_tibble(lq_models[[input$lga]], rownames = "Sector"))
-  downloadServer("download_regional_employment", "Regional Employment.csv", regional_employment())
   downloadServer("download_expenditure", "Expenditure Plot.png")
 
   # Matrix ------------------------------------------------------------------
