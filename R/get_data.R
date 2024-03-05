@@ -45,14 +45,15 @@
 #'
 #'
 #' @param year Census year
-#' @param data NULL by defauilt which uses package data. Specify a data frame to override.
+#' @param region region of location quotient models. One of state or lga.
+#' @param data NULL by default which uses package data. Specify a data frame to override.
 #'
 #' @return list
 #' @export
 #' @import mathjaxr
 #'
 #' @examples
-#' get_data(2021)
+#' get_data(2021, region = "lga")
 get_data <- function(year, region, data = NULL) {
 
   if (is.null(data)) {

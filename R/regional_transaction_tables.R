@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @examples
-#' rtt_basic(data = get_data(2021), region = "Adelaide", type = "household")
+#' rtt_basic(data = get_data(2021, region = "lga"), region = "Adelaide", type = "household")
 rtt_basic <- function(data = get_data(2021, region = "lga"), region, type = "household") {
 
   if (!is.list(data)) {
