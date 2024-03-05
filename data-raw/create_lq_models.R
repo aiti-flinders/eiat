@@ -3,12 +3,13 @@ library(dplyr)
 library(purrr)
 devtools::load_all()
 
-nat_data <- get_data(year = 2021)
+nat_data <- get_data(year = 2021, region = "lga")
 
 create_lq <- function(data, type) {
 
 
   lq_models <- get_available_regions() %>%
+    filter(state != "Other Territories") |>
     pull(lga) %>%
     set_names() %>%
     map(~possibly(rtt_basic, otherwise = "error here")(data, .x, type), .progress = TRUE)

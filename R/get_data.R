@@ -53,7 +53,7 @@
 #'
 #' @examples
 #' get_data(2021)
-get_data <- function(year, data = NULL) {
+get_data <- function(year, region, data = NULL) {
 
   if (is.null(data)) {
     m <- create_19_sector()
@@ -94,7 +94,9 @@ get_data <- function(year, data = NULL) {
     dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
     dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
 
-  lqs <-  eiat::work[eiat::work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
+  if (region == "lga") {
+
+  lqs <-  eiat::work$lga[eiat::work$lga$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
     dplyr::rename(lga = "lga_pow") %>%
     adjust_employment() %>%
     dplyr::select("industry",
@@ -109,8 +111,29 @@ get_data <- function(year, data = NULL) {
                                         .data$employment / sum(.data$employment))) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(fte_industry_ratio, by = "industry") %>%
-    dplyr::mutate(lq = .data$region_ratio /.data$ national_ratio,
+    dplyr::mutate(lq = .data$region_ratio / .data$national_ratio,
                   lq = ifelse(.data$lq < 1, .data$lq, 1))
+
+  } else if (region == "state") {
+
+    lqs <- eiat::work$state[eiat::work$state$year == {{year}}, c("industry", "state_pow", "employment", "year")] |>
+      dplyr::rename(lga = "state_pow") |>
+      adjust_employment() |>
+      dplyr::select("industry",
+                    "lga",
+                    employment = "adjust_jobs") |>
+      dplyr::left_join(fte_ratios, by = "industry") |>
+      dplyr::mutate(employment = .data$employment * .data$fte) |>
+      dplyr::select(-c("FTE Employment", "Total Employment", "fte")) |>
+      dplyr::group_by(.data$lga) |>
+      dplyr::mutate(region_ratio = ifelse(is.nan(.data$employment / sum(.data$employment)),
+                                          0,
+                                          .data$employment / sum(.data$employment))) |>
+      dplyr::ungroup() |>
+      dplyr::left_join(fte_industry_ratio, by = "industry") |>
+      dplyr::mutate(lq = .data$region_ratio / .data$national_ratio,
+                    lq = ifelse(.data$lq < 1, .data$lq, 1))
+  }
 
 
 
