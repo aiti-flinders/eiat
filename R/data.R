@@ -39,6 +39,12 @@
 #'
 "regions"
 
+#' State Compensation of employees
+#'
+#' State accounts data on compensation of employees and gross operating surplus.
+#' This data is used to adjust state input-output tables
+"state_gos_coe"
+
 #' Regional Input Output Tables (Household Split)
 #'
 #' Regional Input-Output tables derived using the location quotient method from the Australian 19 Sector Input-Output table.

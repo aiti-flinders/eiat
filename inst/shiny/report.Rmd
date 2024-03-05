@@ -24,7 +24,7 @@ params:
   title: "Project Title"
   description: "This report was generated automatically via the Economic Impact Assessment Tool."
   author: "EIAT-APP"
-  data: !r matrix(round(runif(19*10, 0, 1)), nrow = 19, ncol = 10, dimnames = list(eiat:::anzsic_swap$name, 2023:(2023+9)))
+  data: !r matrix(round(runif(19*10, 0, 1)), nrow = 19, ncol = 10, dimnames = list(eiat:::anzsic_swap$name, lubridate::year(lubridate::today()):(lubridate::year(lubridate::today())+9)))
   region: "Adelaide"
   date: !r lubridate::today()
   plot_type: "line"

@@ -18,7 +18,7 @@ update_national_io_table <- function(progress = TRUE) {
 
     cli::cli_alert_warning("Updating Regional Input-Output Tables")
 
-    data <- get_data(year = 2021, data = check_updated)
+    data <- get_data(year = 2021, region = "lga", data = check_updated)
 
     lq_models <- create_lq(data, "household", progress)
     lq_basic <- create_lq(data, "basic", progress)

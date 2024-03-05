@@ -1,6 +1,6 @@
 Package: eiat
 Title: Create Regional Input-Output Tables
-Version: 0.2.2
+Version: 0.3.0
 Authors@R: 
     person(given = "Hamish",
            family = "Gamble",
@@ -18,7 +18,7 @@ Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 RdMacros: mathjaxr
 Imports: 
     aititheme (>= 0.0.0.9000),
@@ -27,6 +27,7 @@ Imports:
     ggplot2,
     glue,
     here,
+    lubridate,
     magrittr,
     mathjaxr,
     purrr,

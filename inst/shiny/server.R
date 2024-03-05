@@ -18,7 +18,7 @@ function(input, output, session) {
                             validate("Invalid file; Please upload a .csv file.")
     )
 
-    intended_cols <- "Sector|2023|2024|2025|2026|2027|2028|2029|2030|2031|2032"
+    intended_cols <- paste("Sector", paste(lubridate::year(lubridate::today()):(lubridate::year(lubridate::today())+9),  collapse = "|"), sep = "|")
 
 
     if (any(class(uploaded_file) == "try-error")) {
@@ -64,7 +64,7 @@ function(input, output, session) {
                   nrow = 19,
                   ncol = n_col,
                   dimnames = list(eiat:::anzsic_swap$name,
-                                  2023:(2023 + n_col - 1)))
+                                  lubridate::year(lubridate::today()):(lubridate::year(lubridate::today()) + n_col - 1)))
 
       m
     } else if (reset) {
@@ -80,7 +80,7 @@ function(input, output, session) {
                   nrow = 19,
                   ncol = 1,
                   dimnames = list(eiat:::anzsic_swap$name,
-                                  2023))
+                                  lubridate::year(lubridate::today())))
 
       m
 
@@ -92,7 +92,7 @@ function(input, output, session) {
                   nrow = 19,
                   ncol = n_col,
                   dimnames = list(eiat:::anzsic_swap$name,
-                                  2023:(2023 + n_col - 1)))
+                                  lubridate::year(lubridate::today()):(lubridate::year(lubridate::today()) + n_col - 1)))
 
       m
     }
@@ -111,7 +111,7 @@ function(input, output, session) {
       "EIAT-Template.csv"
     },
     content = function(file) {
-      out <- matrix(0, nrow = 19, ncol = input$years, dimnames = list(eiat:::anzsic_swap$name, 2023:(2023 + input$years - 1)))
+      out <- matrix(0, nrow = 19, ncol = input$years, dimnames = list(eiat:::anzsic_swap$name, lubridate::year(lubridate::today()):(lubridate::year(lubridate::today()) + input$years - 1)))
       out <- as_tibble(out, rownames = "Sector")
       vroom::vroom_write(out, file, delim = ",")
     }
@@ -183,7 +183,7 @@ function(input, output, session) {
       }
 
     } else if (v$upload_state == "reset") {
-      col_names <- 2023:(2023 + input$years - 1)
+      col_names <- lubridate::year(lubridate::today()):(lubridate::year(lubridate::today()) + input$years - 1)
 
       m <- matrix(0,
              nrow = 19,
@@ -201,7 +201,7 @@ function(input, output, session) {
 
   observeEvent(input$clear, {
 
-    col_names <- 2023:(2023 + input$years - 1)
+    col_names <- lubridate::year(lubridate::today()):(lubridate::year(lubridate::today()) + input$years - 1)
 
     m <- matrix(0, nrow = 19, ncol = input$years, dimnames = list(eiat:::anzsic_swap$name, col_names))
     shinyjs::reset("upload")

@@ -30,17 +30,22 @@ get_local_employment <- function(region, year, adjust = TRUE) {
     stop("The `year` argument to `get_local_employment()` must be an ABS Census year (2011, 2016 or 2021).")
   }
 
-  if (!region %in% get_available_regions()$lga) {
-    stop(glue::glue("Unable to find the region: {region} for {year}. Local Government Area names change between
-                    Census years. Try `get_available_regions({year})`"))
-  }
+  if (region %in% get_available_regions()$lga) {
 
-
-  employment <- eiat::live_and_work %>%
+  employment <- eiat::live_and_work$lga %>%
     dplyr::filter(dplyr::if_all(c("lga_pow", "lga_ur"), ~ .x == region),
                   .data$year == {{year}}) %>%
     dplyr::mutate(lga = region, .before = 1) %>%
     dplyr::select(-c("lga_pow", "lga_ur"))
+
+  } else if (region %in% get_available_regions()$state) {
+
+    employment <- eiat::live_and_work$state |>
+      dplyr::filter(dplyr::if_all(c("state_pow", "state_ur"), ~ .x == region),
+                    .data$year == {{year}}) |>
+      dplyr::mutate(lga = region, .before = 1) |>
+      dplyr::select(-c("state_pow", "state_ur"))
+  }
 
   if (adjust) {
     employment %>%
@@ -84,23 +89,36 @@ get_regional_employment <- function(region, year, adjust = TRUE) {
     stop("The `year` argument to `get_regional_employment()` must be an ABS Census year (2011, 2016 or 2021).")
   }
 
-  if (!region %in% get_available_regions()$lga) {
-    stop(glue::glue(
-    "Unable to find the region: {region} for {year}.
-    Local Government Area names change between Census years.
-    Try `get_available_regions({year})`")
-    )
-  }
+
+  if (region %in% get_available_regions()$lga) {
 
 
-  employment <- eiat::work %>%
+  employment <- eiat::work$lga %>%
     dplyr::filter(.data$lga_pow == region,
                   .data$year == {{year}}) %>%
     dplyr::rename(lga = "lga_pow")
+
+  } else if (region %in% get_available_regions()$state) {
+
+    employment <- eiat::work$state |>
+      dplyr::filter(.data$state_pow == region,
+                    .data$year == {{year}}) |>
+      dplyr::rename(lga = "state_pow")
+
+  }
 
   if (adjust) {
     employment %>%
       adjust_employment() %>%
       dplyr::select("lga", "industry", employment = "adjust_jobs")
   }
+
+  # if (!region %in% get_available_regions()$lga & !region %in% get_available_regions()$state) {
+  #   stop(glue::glue(
+  #     "Unable to find the region: {region} for {year}.
+  #   Local Government Area names change between Census years.
+  #   Try `get_available_regions({year})`")
+  #   )
+  # }
 }
+

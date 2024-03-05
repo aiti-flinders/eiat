@@ -1,3 +1,5 @@
+# eiat 0.3.0
+
 # eiat 0.2.2
 
 * New `eiat()` incorporates the eiat shiny application into this package. 

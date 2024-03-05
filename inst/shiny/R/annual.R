@@ -12,6 +12,8 @@ AnnualUI <- function(id) {
 
 AnnualServer <- function(id, tab, region, impact) {
 
+  cur_year <- lubridate::year(lubridate::today())
+
   moduleServer(
     id,
     function(input, output, session) {
@@ -33,9 +35,9 @@ AnnualServer <- function(id, tab, region, impact) {
 
         } else if (length(input$year_radio) == 1) {
 
-        switch(tab,
-               "emp" = h3(glue("Employment Impacts by Industry (FTE) in {region()}: {input$year_radio}")),
-               "grp" = h3(glue("Gross Regional Product Impacts by Industry ($M) in {region()}: {input$year_radio}")))
+          switch(tab,
+                 "emp" = h3(glue("Employment Impacts by Industry (FTE) in {region()}: {input$year_radio}")),
+                 "grp" = h3(glue("Gross Regional Product Impacts by Industry ($M) in {region()}: {input$year_radio}")))
         } else {
 
           switch(tab,
@@ -52,12 +54,12 @@ AnnualServer <- function(id, tab, region, impact) {
         if (all(impact() == 0)) {
           validate("Enter data in Project Setup to calculate economic impacts.")
         }
-        choices <- 2023:(2023 + ncol(impact()) - 1)
+        choices <- cur_year:(cur_year + ncol(impact()) - 1)
         checkboxGroupInput(inputId = session$ns("year_radio"),
-                     label = NULL,
-                     selected = first(choices),
-                     choices = choices,
-                     inline = TRUE)
+                           label = NULL,
+                           selected = first(choices),
+                           choices = choices,
+                           inline = TRUE)
       })
 
       output$annual_table <- renderDataTable({
@@ -87,21 +89,21 @@ AnnualServer <- function(id, tab, region, impact) {
 
         if (length(input$year_radio) <= 1) {
 
-        impact_data() %>%
-          filter(year == input$year_radio) %>%
-          pivot_wider(id_cols = c(year, Sector),
-                      names_from = type,
-                      values_from = value) %>%
-          select(Sector, contains(c("Direct",
-                                    "Flow on",
-                                    "Total"))) %>%
-          janitor::adorn_totals() %>%
-          datatable(colnames = c("Sector", "Direct", "Flow-on", "Total"),
-                    rownames = FALSE,
-                    extensions = "Buttons",
-                    options = list(dom = "Bt",
-                                   buttons = c("copy", "csv", "excel", "pdf", "print"))) %>%
-          disp()
+          impact_data() %>%
+            filter(year == input$year_radio) %>%
+            pivot_wider(id_cols = c(year, Sector),
+                        names_from = type,
+                        values_from = value) %>%
+            select(Sector, contains(c("Direct",
+                                      "Flow on",
+                                      "Total"))) %>%
+            janitor::adorn_totals() %>%
+            datatable(colnames = c("Sector", "Direct", "Flow-on", "Total"),
+                      rownames = FALSE,
+                      extensions = "Buttons",
+                      options = list(dom = "Bt",
+                                     buttons = c("copy", "csv", "excel", "pdf", "print"))) %>%
+            disp()
 
         } else if (length(input$year_radio) >= 2) {
 
@@ -142,6 +144,9 @@ AnnualGraphUI <- function(id) {
 
 AnnualGraphServer <- function(id, tab, region, impact) {
 
+  cur_year <- lubridate::year(lubridate::today())
+
+
   moduleServer(
     id,
     function(input, output, session)  {
@@ -179,10 +184,10 @@ AnnualGraphServer <- function(id, tab, region, impact) {
         if (all(impact() == 0)) {
           validate(FALSE)
         }
-        choices <- 2023:(2023 + ncol(impact()) - 1)
+        choices <- cur_year:(cur_year + ncol(impact()) - 1)
         checkboxGroupInput(inputId = session$ns("year_radio"),
-                     selected = 2023,
-                     label = NULL,
+                           selected = cur_year,
+                           label = NULL,
                      choices = choices,
                      inline = TRUE)
       })
