@@ -29,6 +29,7 @@ read_industry_flow_table <- function(path = NULL) {
 
   industry_flow[1:length(industry_flow)] <- sapply(industry_flow[1:length(industry_flow)], as.numeric)
 
+
   colnames(industry_flow) <- io_cols
 
   industry_flow

@@ -53,23 +53,23 @@ create_114_sector <- function(update = FALSE) {
 
 
   industry_industry <- industry_flows %>%
-    dplyr::rename_with(.cols = c(1:114), ~names(io_cols[1:114])) %>%
+    dplyr::rename_with(.cols = c(1:115), ~names(io_cols[1:115])) %>%
     dplyr::mutate(`Gross Fixed Capital Formation` = rowSums(dplyr::across(dplyr::contains("Fixed Capital Formation"))),
                   .after = "General Government Final Consumption Expenditure") %>%
     dplyr::select(-"Private Gross Fixed Capital Formation",
                   -"Public Corporations Gross Fixed Capital Formation",
                   -"General Government Gross Fixed Capital Formation",
                   -"Final Uses (Q1 to Q7)") %>%
-    dplyr::mutate(row_name = c(names(io_rows[1:114]), io_rows[115:123]),
+    dplyr::mutate(row_name = c(names(io_rows[1:115]), io_rows[116:124]),
                   .before = 1)
 
 
 
-  # Rows 1:114 in the 114 sector model are as reported in the IO table (they're the 114 sectors!)
+  # Rows 1:115 in the 115 sector model are as reported in the IO table (they're the 115 sectors!)
   # Compensation of employees, GOS & Mixed Income, Total Intermediate uses are the same
-  # 114 + 3 = 117
+  # 115 + 3 = 117
   ii_split_1 <- industry_industry %>%
-    dplyr::filter(dplyr::row_number() <= 117)
+    dplyr::filter(dplyr::row_number() <= 118)
 
   ii_split_2 <- industry_industry %>%
     dplyr::filter(!.data$row_name %in% ii_split_1$row_name) %>%
@@ -171,7 +171,7 @@ create_19_sector <- function(update = FALSE) {
     tidyr::pivot_longer(cols = -"row_name",
                         names_to = 'to_ioig',
                         values_to = "flow") %>%
-    dplyr::filter(dplyr::if_all(c("row_name", "to_ioig"), ~.x %in% names(io_rows[1:114]))) %>%
+    dplyr::filter(dplyr::if_all(c("row_name", "to_ioig"), ~.x %in% names(io_rows[1:115]))) %>%
     dplyr::left_join(ioig_anzsic_div, by = c("row_name" = "ioig")) %>%
     dplyr::select(from_anzsic = "anzsic_division_code",
                   "to_ioig",
@@ -185,8 +185,8 @@ create_19_sector <- function(update = FALSE) {
     tidyr::pivot_wider(names_from = "to_anzsic", values_from = "flow")
 
   q2_19 <- industry_industry_114 %>%
-    dplyr::filter(!.data$row_name %in% c(names(io_rows[1:114]), "Total Intermediate Use")) %>%
-    dplyr::select(1:115) %>%
+    dplyr::filter(!.data$row_name %in% c(names(io_rows[1:115]), "Total Intermediate Use")) %>%
+    dplyr::select(1:116) %>%
     tidyr::pivot_longer(cols = -"row_name",
                         names_to = "to_ioig",
                         values_to = "flow") %>%
@@ -205,8 +205,8 @@ create_19_sector <- function(update = FALSE) {
                                                   "Australian Production")))
 
   q3_19 <- industry_industry_114 %>%
-    dplyr::filter(.data$row_name %in% names(io_rows[1:114])) %>%
-    dplyr::select(c(1, 117:121)) %>%
+    dplyr::filter(.data$row_name %in% names(io_rows[1:115])) %>%
+    dplyr::select(c(1, 118:122)) %>%
     tidyr::pivot_longer(cols = -"row_name",
                         names_to = "to_ioig",
                         values_to = "flow") %>%
@@ -227,7 +227,7 @@ create_19_sector <- function(update = FALSE) {
 
   q4_19 <- industry_industry_114 %>%
     dplyr::filter(.data$row_name %in% c("Compensation of employees", "Gross operating surplus & mixed income", "Taxes less subsidies on products and production", "Imports", "Australian Production")) %>%
-    dplyr::select(c(1, 117:121)) %>%
+    dplyr::select(c(1, 118:122)) %>%
     dplyr::rename(from_anzsic = "row_name")
 
   q13 <- dplyr::left_join(q1_19, q3_19, by = "from_anzsic") %>%

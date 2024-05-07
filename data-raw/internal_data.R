@@ -20,13 +20,13 @@ national_employment <- eiat:::read_national_employment_table()
 
 # Input Output Industry Group to ANZSIC -----------------------------------
 
-download.file(url = "https://www.abs.gov.au/methodologies/australian-national-accounts-input-output-tables-methodology/2019-20/Industry%20and%20Product%20Concordance%20Tables%202019-20.xlsx",
+download.file(url = "https://www.abs.gov.au/methodologies/australian-national-accounts-input-output-tables-methodology/2021-22/Industry%20and%20Product%20Concordance%20Tables%202021-22.xlsx",
               destfile = "data-raw/ioig_anzsic.xlsx",
               mode = "wb")
 
 ioig_anzsic <- read_xlsx("data-raw/ioig_anzsic.xlsx",
-                         sheet = "IOIG(2015) to ANZSIC06",
-                         range = "A5:D625",
+                         sheet = "IOIG(2022) to ANZSIC06",
+                         range = "A5:D627",
                          col_types = c("text", "text", "numeric", "text")) %>%
   clean_names() %>%
   filter(!is.na(anzsic_code)) %>%
@@ -72,22 +72,22 @@ anzsic_swap <- tibble(letter = l, name = n)
 
 io_cols <- read_excel("data-raw/520905500105.xlsx",
                       sheet = "Table 5",
-                      range = "C2:DV2")
+                      range = "C2:DW2")
 io_cols_names <- c(colnames(read_excel("data-raw/520905500105.xlsx",
                                        sheet = "Table 5",
-                                       range = "C1:DL1")),
+                                       range = "C1:DM1")),
                    "T4", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "T5", "T6")
 
 io_rows <- read_excel("data-raw/520905500105.xlsx",
                       sheet = "Table 5",
-                      range = "B4:B130",
+                      range = "B4:B131",
                       col_names = c("columns")) %>%
   filter(!is.na(columns)) %>%
   pull(columns)
 
 io_rows_names <- c(read_excel("data-raw/520905500105.xlsx",
                               sheet = "Table 5",
-                              range = "A4:A130",
+                              range = "A4:A131",
                               col_names = c("columns")) %>%
                      filter(!is.na(columns)) %>%
                      mutate(columns = str_pad(columns, 4, "left", "0")) %>%
