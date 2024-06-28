@@ -242,7 +242,7 @@ create_19_sector <- function(update = FALSE) {
     dplyr::mutate(`Total Industry Uses` = rowSums(dplyr::across(c(2:20))))
 
   industry_industry_flows_19 <- dplyr::bind_rows(q13, q24) %>%
-    dplyr::mutate(`Total Supply` = rowSums(dplyr::across(c(21:26)))) %>%
+    dplyr::mutate(`Total Supply` = rowSums(na.rm = TRUE, dplyr::across(c(21:26)))) %>%
     dplyr::bind_rows(employment) %>%
     tidyr::replace_na(list(`Households Final Consumption Expenditure` = 0,
                            `General Government Final Consumption Expenditure` = 0,
