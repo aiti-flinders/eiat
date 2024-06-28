@@ -34,7 +34,19 @@ rtt_basic <- function(data = get_data(2021, region = "lga"), region, type = "hou
 
 
   # Create a 19-sector IO table for the state the LGA is in.
+  # There's no "Other Territories" state data available. In this case, we
+  # need to just use the Australian table.
+
+  if (state != "Other Territories") {
   m <- rtt_state(region = state)
+
+  } else {
+    m <- data$`Australia 19` |>
+      dplyr::filter(!.data$`Industry Sector` %in% c("Total Intermediate Use", "Total Employment")) |>
+      dplyr::select(-"Total Industry Uses") |>
+      tibble::column_to_rownames("Industry Sector") |>
+      as.matrix()
+  }
 
   # Get productivity from the state table
   state_productivity <- m["Australian Production", 1:19]/m["FTE Employment", 1:19]
