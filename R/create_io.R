@@ -199,7 +199,7 @@ create_19_sector <- function(update = FALSE) {
     tidyr::pivot_wider(names_from = "to_anzsic",
                        values_from = "flow") %>%
     dplyr::arrange(factor(.data$from_anzsic, levels = c("Compensation of employees",
-                                                  "Gross operating surplus & mixed income",
+                                                  "Gross operating surplus mixed income",
                                                   "Taxes less subsidies on products and production",
                                                   "Imports",
                                                   "Australian Production")))
