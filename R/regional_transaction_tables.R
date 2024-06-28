@@ -78,7 +78,7 @@ rtt_basic <- function(data = get_data(2021, region = "lga"), region, type = "hou
   # Compensation of employees, Gross operating surplus & mixed income, Taxes less subsidies on products and production,
   # and Australian production are the same as in the national direct coefficients. We add imports now to adjust later.
   ix <- c("Compensation of employees",
-          "Gross operating surplus & mixed income",
+          "Gross operating surplus mixed income",
           "Taxes less subsidies on products and production",
           "Imports",
           "Australian Production")
@@ -118,10 +118,10 @@ rtt_basic <- function(data = get_data(2021, region = "lga"), region, type = "hou
   rtt_basic <- cbind(rtt_basic, c(sector_prod, rep(NA, 5)))
 
   rtt_basic[c("Compensation of employees",
-              "Gross operating surplus & mixed income",
+              "Gross operating surplus mixed income",
               "Taxes less subsidies on products and production",
               "Imports"), 24] <- rowSums(rtt_basic[c("Compensation of employees",
-                                                     "Gross operating surplus & mixed income",
+                                                     "Gross operating surplus mixed income",
                                                      "Taxes less subsidies on products and production",
                                                      "Imports"), ], na.rm = T)
   rtt_basic["Australian Production", 24] <- sum(rtt_basic[,24], na.rm = T)
@@ -291,7 +291,7 @@ rtt_state <- function(data = get_data(2021, region = "state"), region) {
   # Compensation of employees, Gross operating surplus & mixed income, Taxes less subsidies on products and production,
   # and Australian production are the same as in the national direct coefficients. We add imports now to adjust later.
   ix <- c("Compensation of employees",
-          "Gross operating surplus & mixed income",
+          "Gross operating surplus mixed income",
           "Taxes less subsidies on products and production",
           "Imports",
           "Australian Production")
@@ -331,10 +331,10 @@ rtt_state <- function(data = get_data(2021, region = "state"), region) {
   rtt_basic <- cbind(rtt_basic, c(sector_prod, rep(NA, 5)))
 
   rtt_basic[c("Compensation of employees",
-              "Gross operating surplus & mixed income",
+              "Gross operating surplus mixed income",
               "Taxes less subsidies on products and production",
               "Imports"), 24] <- rowSums(rtt_basic[c("Compensation of employees",
-                                                     "Gross operating surplus & mixed income",
+                                                     "Gross operating surplus mixed income",
                                                      "Taxes less subsidies on products and production",
                                                      "Imports"), ], na.rm = T)
   rtt_basic["Australian Production", 24] <- sum(rtt_basic[,24], na.rm = T)
@@ -368,12 +368,12 @@ rtt_state <- function(data = get_data(2021, region = "state"), region) {
 
   rtt_basic_adj <- rtt_basic
   rtt_basic_adj["Compensation of employees", 1:19] = state_coe
-  rtt_basic_adj["Gross operating surplus & mixed income", 1:19] = state_gos
+  rtt_basic_adj["Gross operating surplus mixed income", 1:19] = state_gos
   rtt_basic_adj["Australian Production", 1:19] = colSums(rtt_basic_adj[1:23, 1:19])
   rtt_basic_adj[1:19, "Total Supply"] = rtt_basic_adj["Australian Production", 1:19]
   rtt_basic_adj["Australian Production", "Total Supply"] = sum(rtt_basic_adj["Australian Production", 1:24])
   rtt_basic_adj["Compensation of employees", "Total Supply"] = sum(rtt_basic_adj["Compensation of employees", 1:24])
-  rtt_basic_adj["Gross operating surplus & mixed income", "Total Supply"] = sum(rtt_basic_adj["Gross operating surplus & mixed income", 1:24])
+  rtt_basic_adj["Gross operating surplus mixed income", "Total Supply"] = sum(rtt_basic_adj["Gross operating surplus mixed income", 1:24])
   rtt_basic_adj[1:19, "Exports of Goods and Services"] = rtt_basic_adj[1:19, "Total Supply"] - rowSums(rtt_basic_adj[1:19, 1:23])
 
   rtt_basic_adj
