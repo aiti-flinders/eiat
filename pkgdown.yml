@@ -3,7 +3,7 @@ pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   eiat_user_guide: eiat_user_guide.html
-last_built: 2024-06-28T07:14Z
+last_built: 2024-06-28T07:32Z
 urls:
   reference: https://aiti-flinders.github.io/eiat/reference
   article: https://aiti-flinders.github.io/eiat/articles
