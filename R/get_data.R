@@ -17,7 +17,7 @@
 #' ## Australian 19 Sector Input-Output Table
 #' The 19 Sector Input-Output Table for Australia is derived from the Australian National Accounts: Input-Output Tables.
 #' The Input-Output Table provided by the Australian Bureau of Statistics is more detailed - describing industry-industry flows
-#' for 114 sectors. As Regional Input-Output Tables are *estimated* using the Location Quotient method, an aggregated 19
+#' for 115 sectors. As Regional Input-Output Tables are *estimated* using the Location Quotient method, an aggregated 19
 #' Sector Input-Output Table is used which is a trade-off between availability and reliability of regional data, and
 #' specificity of the regional model.
 #'
@@ -45,15 +45,16 @@
 #'
 #'
 #' @param year Census year
-#' @param data NULL by defauilt which uses package data. Specify a data frame to override.
+#' @param region region of location quotient models. One of state or lga.
+#' @param data NULL by default which uses package data. Specify a data frame to override.
 #'
 #' @return list
 #' @export
 #' @import mathjaxr
 #'
 #' @examples
-#' get_data(2021)
-get_data <- function(year, data = NULL) {
+#' get_data(2021, region = "lga")
+get_data <- function(year, region, data = NULL) {
 
   if (is.null(data)) {
     m <- create_19_sector()
@@ -94,7 +95,9 @@ get_data <- function(year, data = NULL) {
     dplyr::filter(.data$industry %in% anzsic_swap$name) %>%
     dplyr::mutate(productivity = .data$`Australian Production`/.data$`FTE Employment`)
 
-  lqs <-  eiat::work[eiat::work$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
+  if (region == "lga") {
+
+  lqs <-  eiat::work$lga[eiat::work$lga$year == {{year}}, c("industry", "lga_pow", "employment", "year")] %>%
     dplyr::rename(lga = "lga_pow") %>%
     adjust_employment() %>%
     dplyr::select("industry",
@@ -109,8 +112,29 @@ get_data <- function(year, data = NULL) {
                                         .data$employment / sum(.data$employment))) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(fte_industry_ratio, by = "industry") %>%
-    dplyr::mutate(lq = .data$region_ratio /.data$ national_ratio,
+    dplyr::mutate(lq = .data$region_ratio / .data$national_ratio,
                   lq = ifelse(.data$lq < 1, .data$lq, 1))
+
+  } else if (region == "state") {
+
+    lqs <- eiat::work$state[eiat::work$state$year == {{year}}, c("industry", "state_pow", "employment", "year")] |>
+      dplyr::rename(lga = "state_pow") |>
+      adjust_employment() |>
+      dplyr::select("industry",
+                    "lga",
+                    employment = "adjust_jobs") |>
+      dplyr::left_join(fte_ratios, by = "industry") |>
+      dplyr::mutate(employment = .data$employment * .data$fte) |>
+      dplyr::select(-c("FTE Employment", "Total Employment", "fte")) |>
+      dplyr::group_by(.data$lga) |>
+      dplyr::mutate(region_ratio = ifelse(is.nan(.data$employment / sum(.data$employment)),
+                                          0,
+                                          .data$employment / sum(.data$employment))) |>
+      dplyr::ungroup() |>
+      dplyr::left_join(fte_industry_ratio, by = "industry") |>
+      dplyr::mutate(lq = .data$region_ratio / .data$national_ratio,
+                    lq = ifelse(.data$lq < 1, .data$lq, 1))
+  }
 
 
 

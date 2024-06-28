@@ -13,7 +13,7 @@ create_19_sector(update = FALSE)
 tibble of the industry-industry flows between 19 ANZSIC Sectors for Australia.
 }
 \description{
-Creates a 19 Sector Input-Output Table by aggregating the 114 Sector Input-Output Table (see: \code{create_114_sector()})
+Creates a 19 Sector Input-Output Table by aggregating the IOIG Input-Output Table (see: \code{create_ioig_sector()})
 }
 \examples{
 create_19_sector()

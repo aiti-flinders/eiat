@@ -4,12 +4,14 @@
 \alias{get_data}
 \title{Generate Data For Regional Input-Output Table Creation}
 \usage{
-get_data(year, data = NULL)
+get_data(year, region, data = NULL)
 }
 \arguments{
 \item{year}{Census year}
 
-\item{data}{NULL by defauilt which uses package data. Specify a data frame to override.}
+\item{region}{region of location quotient models. One of state or lga.}
+
+\item{data}{NULL by default which uses package data. Specify a data frame to override.}
 }
 \value{
 list
@@ -32,7 +34,7 @@ Input-Output Table. This function provides:
 
 The 19 Sector Input-Output Table for Australia is derived from the Australian National Accounts: Input-Output Tables.
 The Input-Output Table provided by the Australian Bureau of Statistics is more detailed - describing industry-industry flows
-for 114 sectors. As Regional Input-Output Tables are \emph{estimated} using the Location Quotient method, an aggregated 19
+for 115 sectors. As Regional Input-Output Tables are \emph{estimated} using the Location Quotient method, an aggregated 19
 Sector Input-Output Table is used which is a trade-off between availability and reliability of regional data, and
 specificity of the regional model.
 }
@@ -65,5 +67,5 @@ regional coefficient is estimated as \mjeqn{LQ_{i,r}\times a_{i,r}}{} where \mje
 }
 }
 \examples{
-get_data(2021)
+get_data(2021, region = "lga")
 }

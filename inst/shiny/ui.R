@@ -113,7 +113,7 @@ navbarPage("Economic Impact Assessment Tool",
                                              delta = 0,
                                              delete = FALSE
                                            ),
-                                           value = matrix(0, nrow = 19, ncol = 1, dimnames = list(eiat:::anzsic_swap$name, 2023))
+                                           value = matrix(0, nrow = 19, ncol = 1, dimnames = list(eiat:::anzsic_swap$name, lubridate::year(lubridate::today())))
                                ),
                                splitLayout(
                                  downloadButton("download", "Download Excel Template", style = 'margin-top:25px'),
