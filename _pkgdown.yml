@@ -15,7 +15,7 @@ reference:
     Functions for creating  Input-Output Tables
   contents:
   - update_national_io_table
-  - create_114_sector
+  - create_ioig_sector
   - create_19_sector
   - create_lq
   - get_data
