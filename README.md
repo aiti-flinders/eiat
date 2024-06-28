@@ -27,7 +27,7 @@ from the Australian Bureau of Statistics.
 ### Australian National Accounts: Input-Output Tables
 
 The National Accounts are updated on an annual basis. This package takes
-the 114 sector Input-Output Industry Group flow table [Table 5. Industry
+the 115 sector Input-Output Industry Group flow table [Table 5. Industry
 by industry flow table (direct allocation of
 imports)](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500105.xlsx)
 and FTE and total employment by industry table [Table 20. Employment by

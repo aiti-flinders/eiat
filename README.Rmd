@@ -29,7 +29,7 @@ The Regional Input-Output Tables are derived from two main sources, both from th
 
 ### Australian National Accounts: Input-Output Tables
 
-The National Accounts are updated on an annual basis. This package takes the 114 sector Input-Output Industry Group flow table [Table 5. Industry by industry flow table (direct allocation of imports)](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500105.xlsx) and FTE and total employment by industry table [Table 20. Employment by industry](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500120.xlsx) consolidates it to a 19 sector ANZSIC flow table. The Australian 19 sector Input-Output table is the basis for Regional Input-Output tables.
+The National Accounts are updated on an annual basis. This package takes the 115 sector Input-Output Industry Group flow table [Table 5. Industry by industry flow table (direct allocation of imports)](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500105.xlsx) and FTE and total employment by industry table [Table 20. Employment by industry](https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables/2019-20/520905500120.xlsx) consolidates it to a 19 sector ANZSIC flow table. The Australian 19 sector Input-Output table is the basis for Regional Input-Output tables.
 
 Each Friday between 2:00 AM and 3:00 AM AEDT a CI process will check for updates to these tables, and if necessary, update the Regional Input-Output tables.
 

@@ -17,7 +17,7 @@
 #' ## Australian 19 Sector Input-Output Table
 #' The 19 Sector Input-Output Table for Australia is derived from the Australian National Accounts: Input-Output Tables.
 #' The Input-Output Table provided by the Australian Bureau of Statistics is more detailed - describing industry-industry flows
-#' for 114 sectors. As Regional Input-Output Tables are *estimated* using the Location Quotient method, an aggregated 19
+#' for 115 sectors. As Regional Input-Output Tables are *estimated* using the Location Quotient method, an aggregated 19
 #' Sector Input-Output Table is used which is a trade-off between availability and reliability of regional data, and
 #' specificity of the regional model.
 #'
