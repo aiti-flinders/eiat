@@ -18,55 +18,62 @@ navbarPage("Economic Impact Assessment Tool",
                       major projects and policies has become a critical part of regional development analysis, and is an extensive component
                       of the applied economic literature. The linkages between employment opportunities and residents - and business to business linkages affect
                       urban design and transport systems, infrastructure demand, and regional taxes, amongst others."),
-                      column(width = 6,
-                             h2("Data Summary"),
-                      p("This tool draws on data from the following sources."),
-                      p(tags$b("Employment by industry: "),"2021 Census, last updated 3 October 2022"),
-                      p(tags$b("National Input-Output table: "), "Australian Bureau of Statistics, last updated 27 June 2022"),
-                      p(tags$b("Regional Input-Output tables: "), "Derived from the national I-O table using a
+                             column(width = 6,
+                                    h2("Data Summary"),
+                                    p("This tool draws on data from the following sources."),
+                                    p(tags$b("Employment by industry: "),"2021 Census, last updated 3 October 2022"),
+                                    p(tags$b("National Input-Output table: "), "Australian Bureau of Statistics, last updated 27 March 2024"),
+                                    p(tags$b("Regional Input-Output tables: "), "Derived from the national I-O table using a
                                location quotient model. The source code is available", a(href = 'https://github.com/aiti-flinders/eiat', 'here.'),
-                        "The current version is: ", as.character(packageVersion("eiat")))
+                                      "The current version is: ", as.character(packageVersion("eiat")))
+                             ),
+                             column(width = 6,
+                                    h2("Changelog"),
+                                    h3("eiat 0.3.0"),
+                                    h4("Data Updates"),
+                                    p("Regional input-output tables are now derived using the location quotients from their relevant state.
+                                      The state tables are calculated based on the national input-output table published by the ABS."),
+                                    tags$a(href = "https://aiti-flinders.github.io/eiat/news/index.html", "Click here for more information")
+
+                             )
                       ),
-                      column(width = 6)
-                    )
-                    ),
-                    tags$hr(),
-                    fluidRow(
-                      column(width = 12,
-                             h1("Using the Economic Impact Analysis Tool"),
-                             tags$b("The quality of an economic impact assessment is dependent on the quality of input data.", style = 'color:red'),
-                             p("The analyst is required to enter the direct capital expenditures associated with the investment project of interest.
+                      tags$hr(),
+                      fluidRow(
+                        column(width = 12,
+                               h1("Using the Economic Impact Analysis Tool"),
+                               tags$b("The quality of an economic impact assessment is dependent on the quality of input data.", style = 'color:red'),
+                               p("The analyst is required to enter the direct capital expenditures associated with the investment project of interest.
                              These expenditures must be expressed in millions of dollars ($M) in basic or producer prices which exclude margins,
                              taxes, and subsidies. Only expenditure which is expected to occur inside the region should be entered. Expenditures that
                              occur outside of the region should be excluded from the analysis. This includes expenditure which may be allocated to a region but
                              must be imported from outside the region. The tool is agnostic to input data. Any reporting of potential economic impacts
                              should also include a summary of the data used to generate the impact."),
-                             p("A user guide for the EIAT is available for download", a("here.", href = "https://github.com/aiti-flinders/eiat-app/raw/main/user_guide.pdf", target = "_blank"))
-                      ),
-                      column(width = 6,
-                             h2("Important Assumptions"),
-                             p("The use of an input-output model imposes a number of assumptions which must be considered in interpreting the predicted impacts.
+                               p("A user guide for the EIAT is available for download", a("here.", href = "https://github.com/aiti-flinders/eiat-app/raw/main/user_guide.pdf", target = "_blank"))
+                        ),
+                        column(width = 6,
+                               h2("Important Assumptions"),
+                               p("The use of an input-output model imposes a number of assumptions which must be considered in interpreting the predicted impacts.
                              They include:",
-                             tags$ol(
-                               tags$li("Increases in demand in the region are serviced by industries with constant proportions, and no significant price adjustments occur."),
-                               tags$li("Industries have a linear production function, which implies constant returns to scales and fixed input proportions."),
-                               tags$li("Firms within a sector are homogenous, which implies they produce a fixed set of products that are not produced by any other sector,
+                                 tags$ol(
+                                   tags$li("Increases in demand in the region are serviced by industries with constant proportions, and no significant price adjustments occur."),
+                                   tags$li("Industries have a linear production function, which implies constant returns to scales and fixed input proportions."),
+                                   tags$li("Firms within a sector are homogenous, which implies they produce a fixed set of products that are not produced by any other sector,
                                        and that the input structure of the firms are the same."),
-                               tags$li("The model is a static model that does not take into account the dynamic processes involved in the adjustment to an external change.")
-                             )
-                             )
-                      ),
-                      column(width = 6,
-                             h2("Required Information"),
-                             p("Before using input-output analysis to estimate the economic impact of regional expenditure, the user is required to collect information.
+                                   tags$li("The model is a static model that does not take into account the dynamic processes involved in the adjustment to an external change.")
+                                 )
+                               )
+                        ),
+                        column(width = 6,
+                               h2("Required Information"),
+                               p("Before using input-output analysis to estimate the economic impact of regional expenditure, the user is required to collect information.
                              The analyst must know the magnitude of various expenditures and where they occur. Also needed is information on how the sectors receiving this
                              expenditure share their expenditures among the various sectors from whom they buy, and so on, for the further expenditure rounds. While private
                              and public stakeholders are welcome to use this powerful tool to conduct input-output analysis, it is recommended that expert consultants are
                              engaged for a full and detailed report on the estimations of economic impacts and the interpretations.")
 
+                        )
                       )
                     )
-
 
 
            ),
